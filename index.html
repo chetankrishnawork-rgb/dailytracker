@@ -888,7 +888,10 @@ function showToast(msg, ms=2800) {
 
 /* ─── Firebase ─── */
 async function fbGet(path) {
-  try { const r = await fetch(FIREBASE+path+'.json'); return r.ok ? r.json() : null; } catch { return null; }
+  try {
+    const r = await fetch(FIREBASE+path+'.json', {cache: 'no-store'});
+    return r.ok ? r.json() : null;
+  } catch { return null; }
 }
 async function fbSet(path, data) {
   try { await fetch(FIREBASE+path+'.json', {method:'PUT', body:JSON.stringify(data), headers:{'Content-Type':'application/json'}}); } catch {}
@@ -915,8 +918,9 @@ async function init() {
       state.tasks = Object.entries(data.tasks).map(([id,t]) => ({id, ...t}));
     }
   }
-  if (!state.name) { openModal('welcomeModal'); }
   renderAll();
+  // Only show welcome after Firebase has responded and name is genuinely absent
+  if (!state.name) { openModal('welcomeModal'); }
 }
 
 function renderAll() {
@@ -1014,17 +1018,18 @@ function renderMissionList(elId, tasks) {
 function taskCardHTML(t) {
   const overdue = isOverdue(t);
   const xp = CAT_XP[t.category] || 10;
-  return '<div class="mission-card cat-'+t.category+' '+(t.done?'completed':'')+' '+(overdue?'overdue-card':'')+'" onclick="openTask(''+t.id+'')">'+
-    '<div class="mission-check '+(t.done?'done':'')+'" onclick="toggleTask(event,''+t.id+'')"></div>'+
-    '<div class="mission-info">'+
-      '<div class="mission-title">'+escHtml(t.name)+'</div>'+
-      '<div class="mission-meta">'+
-        '<span class="mission-tag">'+(CAT_ICONS[t.category]||'🌟')+' '+(CAT_LABELS[t.category]||t.category)+'</span>'+
-        (t.due ? '<span class="mission-due '+(overdue?'overdue':'')+'>'+(overdue?'⚠ Overdue · ':'')+formatDate(t.due)+'</span>' : '')+
-        '<span class="mission-xp">+'+xp+' XP</span>'+
-      '</div>'+
-    '</div>'+
-  '</div>';
+  const id = t.id;
+  return `<div class="mission-card cat-${t.category} ${t.done?'completed':''} ${overdue?'overdue-card':''}" onclick="openTask('${id}')">
+    <div class="mission-check ${t.done?'done':''}" onclick="toggleTask(event,'${id}')"></div>
+    <div class="mission-info">
+      <div class="mission-title">${escHtml(t.name)}</div>
+      <div class="mission-meta">
+        <span class="mission-tag">${CAT_ICONS[t.category]||'🌟'} ${CAT_LABELS[t.category]||t.category}</span>
+        ${t.due ? `<span class="mission-due ${overdue?'overdue':''}">${overdue?'⚠ Overdue · ':''}${formatDate(t.due)}</span>` : ''}
+        <span class="mission-xp">+${xp} XP</span>
+      </div>
+    </div>
+  </div>`;
 }
 
 function escHtml(s) { return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -1140,9 +1145,11 @@ function closeTaskModal() { closeModal('taskModal'); }
 
 /* ─── Calendar ─── */
 function renderCalendar() {
+  const calTitle = document.getElementById('calTitle');
+  if (!calTitle) return; // monthly tab not active
   const y = state.calYear, m = state.calMonth;
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('calTitle').textContent = months[m]+' '+y;
+  calTitle.textContent = months[m]+' '+y;
   const first = new Date(y,m,1), lastDay = new Date(y,m+1,0).getDate();
   let startDow = first.getDay();
   const taskDueDates = new Set(state.tasks.filter(t=>t.due).map(t=>t.due));
@@ -1174,12 +1181,13 @@ function prevMonth() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;
 function nextMonth() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
 
 function renderCalDayTasks() {
+  const el = document.getElementById('calDayTasks');
+  if (!el) return; // monthly tab not visible yet
   const ds = toDateStr(state.calSelected);
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const d = state.calSelected;
   document.getElementById('calDayTitle').textContent = `${months[d.getMonth()]} ${d.getDate()}`;
   const tasks = state.tasks.filter(t=>t.due===ds);
-  const el = document.getElementById('calDayTasks');
   if (tasks.length===0) { el.innerHTML=`<div class="empty-state"><span class="rocket">🚀</span><p>No missions on this day.</p></div>`; return; }
   el.innerHTML = tasks.map(t=>taskCardHTML(t)).join('');
 }

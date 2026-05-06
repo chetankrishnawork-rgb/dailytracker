@@ -1,5 +1,5 @@
 /* Mission Control — Service Worker */
-const CACHE = 'mission-control-v1';
+const CACHE = 'mission-control-v2';
 const ASSETS = [
   '/dailytracker/',
   '/dailytracker/index.html',
@@ -25,8 +25,9 @@ self.addEventListener('activate', e => {
 });
 
 /* Fetch strategy:
-   - Firebase requests → always network (live data)
-   - Everything else → cache first, fallback to network */
+   - Firebase / googleapis → always network (live data, never cache)
+   - HTML navigation → network-first (so updates propagate), fallback to cache
+   - Other assets (icons, manifest) → cache-first */
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
@@ -36,19 +37,29 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  /* Cache-first for app shell */
+  /* Network-first for HTML — ensures updates deploy immediately */
+  if (e.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request, {cache: 'no-store'}).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return response;
+      }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  /* Cache-first for everything else (icons, manifest, sw.js) */
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
       return fetch(e.request).then(response => {
-        /* Cache valid GET responses */
         if (e.request.method === 'GET' && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
         return response;
       }).catch(() => {
-        /* Offline fallback: serve app shell */
         if (e.request.mode === 'navigate') {
           return caches.match('/dailytracker/index.html');
         }
