@@ -908,18 +908,23 @@ async function fbPatch(path, data) {
 
 /* ─── Init ─── */
 async function init() {
+  // Restore name instantly from localStorage so welcome modal never shows on repeat visits
+  try { state.name = localStorage.getItem('mc_name') || ''; } catch {}
+
   const data = await fbGet('/');
   if (data) {
-    state.name = data.name || '';
+    state.name = data.name || state.name; // Firebase wins, localStorage as fallback
     state.xp = data.xp || 0;
     state.streak = data.streak || 0;
     state.lastDate = data.lastDate || null;
     if (data.tasks) {
       state.tasks = Object.entries(data.tasks).map(([id,t]) => ({id, ...t}));
     }
+    // Keep localStorage in sync with Firebase
+    try { if (state.name) localStorage.setItem('mc_name', state.name); } catch {}
   }
   renderAll();
-  // Only show welcome after Firebase has responded and name is genuinely absent
+  // Only show welcome if name is genuinely absent from both localStorage and Firebase
   if (!state.name) { openModal('welcomeModal'); }
 }
 
@@ -1336,12 +1341,15 @@ function openSettings() {
 function closeSettings() { closeModal('settingsModal'); }
 async function saveName() {
   state.name = document.getElementById('settingsName').value.trim() || state.name;
+  try { localStorage.setItem('mc_name', state.name); } catch {}
   await fbSet('/name', state.name); closeSettings(); updateHeader();
 }
 async function saveWelcomeName() {
   const n = document.getElementById('welcomeName').value.trim();
   if (!n) { document.getElementById('welcomeName').focus(); return; }
-  state.name = n; await fbSet('/name', n); closeModal('welcomeModal'); updateHeader();
+  state.name = n;
+  try { localStorage.setItem('mc_name', n); } catch {}
+  await fbSet('/name', n); closeModal('welcomeModal'); updateHeader();
 }
 
 async function installApp() {
