@@ -590,9 +590,63 @@
     padding: 12px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 8px;
   }
   .group-date-header.overdue-header { color: var(--accent3); }
+
+  /* ─── Sign-In Screen ─── */
+  #signinScreen {
+    position: fixed; inset: 0; z-index: 500;
+    background: var(--space-dark);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 24px; text-align: center;
+  }
+  #signinScreen.hidden { display: none; }
+  .signin-rocket { font-size: 72px; margin-bottom: 20px; display: block; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  .signin-title {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .signin-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 40px; line-height: 1.5; }
+  .google-btn {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%; max-width: 320px; height: 56px; border-radius: var(--radius-md);
+    background: #fff; border: none; color: #3c4043;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3); transition: box-shadow 0.2s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .google-btn:active { transform: scale(0.97); box-shadow: 0 1px 6px rgba(0,0,0,0.2); }
+  .google-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+  .signin-error {
+    margin-top: 16px; font-size: 13px; color: var(--accent3);
+    min-height: 20px;
+  }
+  .signin-loading {
+    margin-top: 16px; font-size: 14px; color: var(--text-secondary); display: none;
+  }
 </style>
 </head>
 <body>
+
+<!-- SIGN-IN SCREEN -->
+<div id="signinScreen">
+  <span class="signin-rocket">🚀</span>
+  <div class="signin-title">MISSION CONTROL</div>
+  <div class="signin-sub">Sign in with your Google account<br>to access your personal mission hub.</div>
+  <button class="google-btn" onclick="signIn()" id="googleSignInBtn">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+    </svg>
+    Sign in with Google
+  </button>
+  <div class="signin-loading" id="signinLoading">⏳ Signing in...</div>
+  <div class="signin-error" id="signinError"></div>
+</div>
+
 
 <div id="app">
   <!-- HEADER -->
@@ -834,6 +888,9 @@
       <button class="modal-btn" onclick="closeSettings()">Cancel</button>
       <button class="modal-btn primary" onclick="saveName()">Save</button>
     </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="modal-btn danger" style="width:100%" onclick="signOut()">🚪 Sign Out</button>
+    </div>
   </div>
 </div>
 
@@ -856,8 +913,130 @@
 <!-- LEVEL UP TOAST -->
 <div class="levelup-toast" id="levelupToast">⭐ LEVEL UP! You're amazing!</div>
 
-<script>
-const FIREBASE = 'https://dailytrackerforkids-default-rtdb.firebaseio.com';
+<script type="module">
+import { initializeApp }            from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+         getRedirectResult, onAuthStateChanged, signOut as fbSignOut }
+                                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getDatabase, ref, get, set, push, patch, remove, child }
+                                    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+/* ─── Firebase Init ─── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyAcA2XBDerz-2XNMLjGboVw0muIsGB6vtM",
+  authDomain:        "dailytrackerforkids.firebaseapp.com",
+  databaseURL:       "https://dailytrackerforkids-default-rtdb.firebaseio.com",
+  projectId:         "dailytrackerforkids",
+  storageBucket:     "dailytrackerforkids.firebasestorage.app",
+  messagingSenderId: "534053731303",
+  appId:             "1:534053731303:web:40751979c33a6689f85b42"
+};
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const db       = getDatabase(app);
+const provider = new GoogleAuthProvider();
+let   uid      = null;
+
+/* ─── Firebase Helpers (now use SDK, not raw fetch) ─── */
+function userRef(path) { return ref(db, 'users/' + uid + (path || '')); }
+
+async function fbGet(path) {
+  try { const snap = await get(userRef(path)); return snap.exists() ? snap.val() : null; }
+  catch(e) { console.error('fbGet', e); return null; }
+}
+async function fbSet(path, data) {
+  try { await set(userRef(path), data); } catch(e) { console.error('fbSet', e); }
+}
+async function fbPush(path, data) {
+  try { const r = await push(userRef(path), data); return r.key; }
+  catch(e) { console.error('fbPush', e); return null; }
+}
+async function fbDelete(path) {
+  try { await remove(userRef(path)); } catch(e) { console.error('fbDelete', e); }
+}
+async function fbPatch(path, data) {
+  try { await patch(userRef(path), data); } catch(e) { console.error('fbPatch', e); }
+}
+
+/* ─── Auth UI ─── */
+function showSignIn()  { document.getElementById('signinScreen').classList.remove('hidden'); }
+function hideSignIn()  { document.getElementById('signinScreen').classList.add('hidden'); }
+
+window.signIn = async function() {
+  document.getElementById('signinError').textContent = '';
+  document.getElementById('signinLoading').style.display = 'block';
+  document.getElementById('googleSignInBtn').disabled = true;
+  try {
+    // Use redirect on mobile/PWA for reliability, popup on desktop
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                      || window.navigator.standalone;
+    if (isStandalone) {
+      await signInWithRedirect(auth, provider);
+    } else {
+      await signInWithPopup(auth, provider);
+    }
+  } catch(e) {
+    console.error('signIn error', e);
+    document.getElementById('signinError').textContent = 'Sign-in failed. Please try again.';
+    document.getElementById('signinLoading').style.display = 'none';
+    document.getElementById('googleSignInBtn').disabled = false;
+  }
+};
+
+window.signOut = async function() {
+  await fbSignOut(auth);
+  uid = null;
+  closeSettings();
+  showSignIn();
+};
+
+/* ─── Auth State ─── */
+// Handle redirect result first (for PWA/mobile redirect flow)
+getRedirectResult(auth).catch(e => console.error('redirect result', e));
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    uid = user.uid;
+    hideSignIn();
+    await migrateOldData();
+    await init();
+  } else {
+    showSignIn();
+  }
+});
+
+/* ─── Migrate old root-level data to /users/{uid}/ ─── */
+async function migrateOldData() {
+  try {
+    // Check if user already has data at new path
+    const hasNew = await get(ref(db, 'users/' + uid + '/name'));
+    if (hasNew.exists()) return; // already migrated
+
+    // Check for old root-level data
+    const oldSnap = await get(ref(db, '/'));
+    if (!oldSnap.exists()) return;
+    const old = oldSnap.val();
+
+    // Only migrate if it looks like the old schema (has name/xp at root)
+    if (!old.name && !old.xp && !old.tasks) return;
+
+    console.log('Migrating old data to new user path...');
+    const newData = {};
+    if (old.name)     newData.name     = old.name;
+    if (old.xp)       newData.xp       = old.xp;
+    if (old.streak)   newData.streak   = old.streak;
+    if (old.lastDate) newData.lastDate  = old.lastDate;
+    if (old.tasks)    newData.tasks    = old.tasks;
+
+    await set(ref(db, 'users/' + uid), newData);
+    console.log('Migration complete.');
+
+    // Clean up old root data (optional — safe to leave)
+    // await remove(ref(db, '/name')); etc.
+  } catch(e) { console.error('migration error', e); }
+}
+
+/* ─── App State ─── */
 let state = {
   name: '', xp: 0, streak: 0, tasks: [],
   currentFilter: 'all', calYear: new Date().getFullYear(), calMonth: new Date().getMonth(),
@@ -874,9 +1053,8 @@ const LEVELS = [
 ];
 const CAT_ICONS  = { school:'📚', sport:'⚽', personal:'🎮', leadership:'🦁', other:'🌟' };
 const CAT_LABELS = { school:'School', sport:'Sport', personal:'Personal', leadership:'Leadership', other:'Other' };
-const CAT_XP        = { school:20, sport:15, personal:10, leadership:25, other:10 };
-const LEVEL_ICONS   = ['🌱','🔭','✈️','🚀','⭐','🎖️','🏅','🌟','👑','🌌'];
-
+const CAT_XP     = { school:20, sport:15, personal:10, leadership:25, other:10 };
+const LEVEL_ICONS = ['🌱','🔭','✈️','🚀','⭐','🎖️','🏅','🌟','👑','🌌'];
 
 /* ─── Toast ─── */
 function showToast(msg, ms=2800) {
@@ -886,53 +1064,30 @@ function showToast(msg, ms=2800) {
   el._t = setTimeout(() => el.classList.remove('show'), ms);
 }
 
-/* ─── Firebase ─── */
-async function fbGet(path) {
-  try {
-    const r = await fetch(FIREBASE+path+'.json', {cache: 'no-store'});
-    return r.ok ? r.json() : null;
-  } catch { return null; }
-}
-async function fbSet(path, data) {
-  try { await fetch(FIREBASE+path+'.json', {method:'PUT', body:JSON.stringify(data), headers:{'Content-Type':'application/json'}}); } catch {}
-}
-async function fbPush(path, data) {
-  try { const r = await fetch(FIREBASE+path+'.json', {method:'POST', body:JSON.stringify(data), headers:{'Content-Type':'application/json'}}); return r.ok ? (await r.json()).name : null; } catch { return null; }
-}
-async function fbDelete(path) {
-  try { await fetch(FIREBASE+path+'.json', {method:'DELETE'}); } catch {}
-}
-async function fbPatch(path, data) {
-  try { await fetch(FIREBASE+path+'.json', {method:'PATCH', body:JSON.stringify(data), headers:{'Content-Type':'application/json'}}); } catch {}
-}
-
 /* ─── Init ─── */
 async function init() {
-  // Restore name instantly from localStorage so welcome modal never shows on repeat visits
   try { state.name = localStorage.getItem('mc_name') || ''; } catch {}
 
   const data = await fbGet('/');
   if (data) {
-    state.name = data.name || state.name; // Firebase wins, localStorage as fallback
-    state.xp = data.xp || 0;
-    state.streak = data.streak || 0;
-    state.lastDate = data.lastDate || null;
+    state.name     = data.name     || state.name;
+    state.xp       = data.xp       || 0;
+    state.streak   = data.streak   || 0;
+    state.lastDate = data.lastDate  || null;
     if (data.tasks) {
       state.tasks = Object.entries(data.tasks).map(([id,t]) => ({id, ...t}));
     }
-    // Keep localStorage in sync with Firebase
     try { if (state.name) localStorage.setItem('mc_name', state.name); } catch {}
   }
   renderAll();
-  // Only show welcome if name is genuinely absent from both localStorage and Firebase
   if (!state.name) { openModal('welcomeModal'); }
 }
 
+/* ─── renderAll ─── */
 function renderAll() {
   updateHeader();
   renderDailyProgress();
   renderTasks();
-  // Only re-render inactive tabs if they're currently visible
   if (state.activeTab === 'monthly') {
     if (state.monthSub === 'list') renderMonthList();
     else renderCalendar();
@@ -946,6 +1101,11 @@ function getLevel() {
   for (let i = LEVELS.length-1; i >= 0; i--) { if (state.xp >= LEVELS[i].xp) { lv = i; break; } }
   return lv;
 }
+function getLevelFromXp(xp) {
+  let lv = 0;
+  for (let i = LEVELS.length-1; i >= 0; i--) { if (xp >= LEVELS[i].xp) { lv = i; break; } }
+  return lv;
+}
 function updateHeader() {
   const lv = getLevel();
   const nextXp = (LEVELS[lv+1] || LEVELS[lv]).xp;
@@ -954,8 +1114,6 @@ function updateHeader() {
   document.getElementById('commanderNameDisplay').textContent = state.name || 'Commander';
   document.getElementById('commanderLevelDisplay').textContent = `LEVEL ${lv+1} — ${LEVELS[lv].name} · ${state.xp} / ${nextXp} XP`;
   document.getElementById('xpBar').style.width = pct + '%';
-
-  // Single pass over tasks for all three counters
   const today = toDateStr(new Date());
   let totalDone = 0, todayActive = 0;
   for (const t of state.tasks) {
@@ -965,6 +1123,20 @@ function updateHeader() {
   document.getElementById('streakCount').textContent = state.streak;
   document.getElementById('completedCount').textContent = totalDone;
   document.getElementById('todayCount').textContent = todayActive;
+}
+
+/* ─── Daily Progress Bar ─── */
+function renderDailyProgress() {
+  const today = toDateStr(new Date());
+  let total = 0, todayDone = 0;
+  for (const t of state.tasks) {
+    if (t.due === today || !t.due) { total++; if (t.done) todayDone++; }
+  }
+  const pct = total === 0 ? 0 : Math.round(todayDone / total * 100);
+  document.getElementById('progressCount').textContent = todayDone + ' / ' + total + ' done';
+  const fill = document.getElementById('progressFill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('full', pct === 100);
 }
 
 /* ─── Task Rendering ─── */
@@ -981,32 +1153,12 @@ function isOverdue(t) {
   return t.due < toDateStr(new Date());
 }
 
-
-/* ─── Daily Progress Bar ─── */
-function renderDailyProgress() {
-  const today = toDateStr(new Date());
-  let total = 0, todayDone = 0;
-  for (const t of state.tasks) {
-    if (t.due === today || !t.due) {
-      total++;
-      if (t.done) todayDone++;
-    }
-  }
-  const pct = total === 0 ? 0 : Math.round(todayDone / total * 100);
-  document.getElementById('progressCount').textContent = todayDone + ' / ' + total + ' done';
-  const fill = document.getElementById('progressFill');
-  fill.style.width = pct + '%';
-  fill.classList.toggle('full', pct === 100);
-}
-
 function renderTasks() {
   const cat = state.currentFilter;
   let active = state.tasks.filter(t => !t.done && (cat==='all' || t.category===cat));
-  let done = state.tasks.filter(t => t.done && (cat==='all' || t.category===cat));
-
+  let done   = state.tasks.filter(t =>  t.done && (cat==='all' || t.category===cat));
   active.sort((a,b) => (a.due||'9999') < (b.due||'9999') ? -1 : 1);
-  done.sort((a,b) => (a.completedDate||'') < (b.completedDate||'') ? 1 : -1);
-
+  done.sort((a,b)   => (a.completedDate||'') < (b.completedDate||'') ? 1 : -1);
   renderMissionList('activeMissions', active);
   renderMissionList('completedMissions', done);
 }
@@ -1024,8 +1176,8 @@ function taskCardHTML(t) {
   const overdue = isOverdue(t);
   const xp = CAT_XP[t.category] || 10;
   const id = t.id;
-  return `<div class="mission-card cat-${t.category} ${t.done?'completed':''} ${overdue?'overdue-card':''}" onclick="openTask('${id}')">
-    <div class="mission-check ${t.done?'done':''}" onclick="toggleTask(event,'${id}')"></div>
+  return `<div class="mission-card cat-${t.category} ${t.done?'completed':''} ${overdue?'overdue-card':''}" onclick="window._openTask('${id}')">
+    <div class="mission-check ${t.done?'done':''}" onclick="window._toggleTask(event,'${id}')"></div>
     <div class="mission-info">
       <div class="mission-title">${escHtml(t.name)}</div>
       <div class="mission-meta">
@@ -1052,7 +1204,7 @@ async function addSingleTask() {
 async function addMultiTask() {
   const name = document.getElementById('multiTaskName').value.trim();
   const from = document.getElementById('multiFrom').value;
-  const to = document.getElementById('multiTo').value;
+  const to   = document.getElementById('multiTo').value;
   if (!name || !from || !to) return;
   const start = new Date(from+'T00:00:00'), end = new Date(to+'T00:00:00');
   const created = toDateStr(new Date());
@@ -1060,12 +1212,10 @@ async function addMultiTask() {
   let cur = new Date(start), count = 0;
   while (cur <= end && count < 90) {
     if (state.selectedDays.includes(cur.getDay())) {
-      const task = { name, category: state.multiCat, due: toDateStr(cur), done: false, created };
-      pushes.push(task);
+      pushes.push({ name, category: state.multiCat, due: toDateStr(cur), done: false, created });
     }
     cur.setDate(cur.getDate()+1); count++;
   }
-  // Fire all writes in parallel
   const ids = await Promise.all(pushes.map(task => fbPush('/tasks', task)));
   ids.forEach((id, i) => { if (id) state.tasks.push({id, ...pushes[i]}); });
   document.getElementById('multiTaskName').value='';
@@ -1078,46 +1228,26 @@ async function toggleTask(e, id) {
   if (!t) return;
   t.done = !t.done;
   t.completedDate = t.done ? toDateStr(new Date()) : null;
-
   const earned = CAT_XP[t.category] || 10;
   const oldXp = state.xp;
-  if (t.done) {
-    state.xp += earned;
-    updateStreak();
-  } else {
-    state.xp = Math.max(0, state.xp - earned);
-  }
-
-  // Batch all writes into a single PATCH request
+  if (t.done) { state.xp += earned; updateStreak(); }
+  else        { state.xp = Math.max(0, state.xp - earned); }
   await fbPatch('/', {
     ['tasks/'+id]: {name:t.name,category:t.category,due:t.due,done:t.done,created:t.created,completedDate:t.completedDate||null},
-    xp: state.xp,
-    streak: state.streak,
-    lastDate: state.lastDate
+    xp: state.xp, streak: state.streak, lastDate: state.lastDate
   });
-
   const oldLv = getLevelFromXp(oldXp), newLv = getLevel();
   if (t.done && newLv > oldLv) showLevelUp();
-  showToast(t.done ? '\u2705 Mission complete! +' + earned + ' XP' : '\u21a9 Mission reopened');
+  showToast(t.done ? '✅ Mission complete! +' + earned + ' XP' : '↩ Mission reopened');
   renderAll();
 }
 
 function updateStreak() {
-  const today = toDateStr(new Date());
-  if (state.lastDate === today) return; // already counted today
+  const today     = toDateStr(new Date());
+  if (state.lastDate === today) return;
   const yesterday = toDateStr(new Date(Date.now() - 86400000));
-  if (state.lastDate === yesterday) {
-    state.streak += 1; // consecutive day — extend streak
-  } else {
-    state.streak = 1;  // gap or first ever — reset to 1
-  }
-  state.lastDate = today;
-}
-
-function getLevelFromXp(xp) {
-  let lv = 0;
-  for (let i = LEVELS.length-1; i >= 0; i--) { if (xp >= LEVELS[i].xp) { lv = i; break; } }
-  return lv;
+  state.streak    = state.lastDate === yesterday ? state.streak + 1 : 1;
+  state.lastDate  = today;
 }
 
 async function deleteCurrentTask() {
@@ -1151,30 +1281,25 @@ function closeTaskModal() { closeModal('taskModal'); }
 /* ─── Calendar ─── */
 function renderCalendar() {
   const calTitle = document.getElementById('calTitle');
-  if (!calTitle) return; // monthly tab not active
+  if (!calTitle) return;
   const y = state.calYear, m = state.calMonth;
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   calTitle.textContent = months[m]+' '+y;
   const first = new Date(y,m,1), lastDay = new Date(y,m+1,0).getDate();
-  let startDow = first.getDay();
   const taskDueDates = new Set(state.tasks.filter(t=>t.due).map(t=>t.due));
   const today = toDateStr(new Date());
   let html = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-day-name">${d}</div>`).join('');
-  for (let i=0;i<startDow;i++) html += '<div class="cal-day other-month"></div>';
+  for (let i=0;i<first.getDay();i++) html += '<div class="cal-day other-month"></div>';
   for (let d=1;d<=lastDay;d++) {
     const ds = y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const isToday = ds===today;
-    const selStr = toDateStr(state.calSelected);
-    const isSel = ds===selStr;
-    const hasTask = taskDueDates.has(ds);
-    html += `<div class="cal-day ${isToday?'today':''} ${isSel&&!isToday?'selected':''} ${hasTask?'has-task':''}" data-date="${ds}" onclick="selectCalDay('${ds}')">${d}</div>`;
+    const isToday = ds===today, isSel = ds===toDateStr(state.calSelected), hasTask = taskDueDates.has(ds);
+    html += `<div class="cal-day ${isToday?'today':''} ${isSel&&!isToday?'selected':''} ${hasTask?'has-task':''}" data-date="${ds}" onclick="window._selectCalDay('${ds}')">${d}</div>`;
   }
   document.getElementById('calGrid').innerHTML = html;
   renderCalDayTasks();
 }
 
 function selectCalDay(ds) {
-  // Update selected class without rebuilding the whole grid
   const prev = document.querySelector('.cal-day.selected');
   if (prev) prev.classList.remove('selected');
   const next = document.querySelector(`.cal-day[data-date="${ds}"]`);
@@ -1182,12 +1307,10 @@ function selectCalDay(ds) {
   state.calSelected = new Date(ds+'T00:00:00');
   renderCalDayTasks();
 }
-function prevMonth() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
-function nextMonth() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
 
 function renderCalDayTasks() {
   const el = document.getElementById('calDayTasks');
-  if (!el) return; // monthly tab not visible yet
+  if (!el) return;
   const ds = toDateStr(state.calSelected);
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const d = state.calSelected;
@@ -1197,28 +1320,16 @@ function renderCalDayTasks() {
   el.innerHTML = tasks.map(t=>taskCardHTML(t)).join('');
 }
 
-/* ─── Levels ─── */
-function renderLevels() {
-  const curLv = getLevel();
-  document.getElementById('levelRoad').innerHTML = LEVELS.map((l,i)=>`
-    <div class="level-item ${i===curLv?'current':''}">
-      <div class="level-badge">${LEVEL_ICONS[i]||'⭐'}</div>
-      <div>
-        <div class="level-name">Level ${i+1} — ${l.name}</div>
-        <div class="level-xp">${l.xp} XP ${i===curLv?'← You are here':i<curLv?'✓ Achieved':''}</div>
-        ${i===curLv ? `<div class="xp-bar-track" style="margin-top:6px"><div class="xp-bar-fill" style="width:${Math.min(100,Math.round((state.xp-l.xp)/Math.max(1,(LEVELS[i+1]||{xp:state.xp+1}).xp-l.xp)*100))}%"></div></div>` : ''}
-      </div>
-    </div>`).join('');
-}
-
+function prevMonth() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
+function nextMonth() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
 
 /* ─── Monthly List View ─── */
 function switchMonthSub(sub, el) {
   state.monthSub = sub;
   document.querySelectorAll('#tab-monthly .tab-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('monthSubCalendar').style.display = sub === 'calendar' ? '' : 'none';
-  document.getElementById('monthSubList').style.display = sub === 'list' ? '' : 'none';
+  document.getElementById('monthSubCalendar').style.display = sub==='calendar' ? '' : 'none';
+  document.getElementById('monthSubList').style.display     = sub==='list'     ? '' : 'none';
   if (sub === 'list') renderMonthList();
 }
 
@@ -1231,55 +1342,48 @@ function setGroupBy(el) {
 
 function renderMonthList() {
   const el = document.getElementById('monthListContent');
-  const tasks = state.tasks.slice();
   const today = toDateStr(new Date());
-
-  // Separate overdue for special header
-  const overdue = tasks.filter(t => !t.done && t.due && t.due < today);
-  const rest = tasks.filter(t => !((!t.done && t.due && t.due < today)));
-
-  let groups = {};
-
-  const keyFn = state.groupBy === 'due'      ? t => t.due || 'No due date'
-              : state.groupBy === 'created'  ? t => t.created || 'Unknown'
-              :                                t => t.category || 'other';
-  rest.forEach(t => {
-    const key = keyFn(t);
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(t);
-  });
-
+  const overdue = state.tasks.filter(t => !t.done && t.due && t.due < today);
+  const rest    = state.tasks.filter(t => !(!t.done && t.due && t.due < today));
+  const keyFn = state.groupBy === 'due'     ? t => t.due      || 'No due date'
+              : state.groupBy === 'created' ? t => t.created  || 'Unknown'
+              :                               t => t.category  || 'other';
+  const groups = {};
+  rest.forEach(t => { const k = keyFn(t); if (!groups[k]) groups[k]=[]; groups[k].push(t); });
   let html = '';
-
-  // Overdue section first
   if (overdue.length > 0) {
-    html += '<div class="group-date-header overdue-header">⚠ Overdue (' + overdue.length + ')</div>';
-    html += '<div class="missions-list" style="margin-bottom:16px">' + overdue.map(t => taskCardHTML(t)).join('') + '</div>';
+    html += `<div class="group-date-header overdue-header">⚠ Overdue (${overdue.length})</div>`;
+    html += `<div class="missions-list" style="margin-bottom:16px">${overdue.map(t=>taskCardHTML(t)).join('')}</div>`;
   }
-
-  const sortedKeys = Object.keys(groups).sort();
-  sortedKeys.forEach(key => {
+  Object.keys(groups).sort().forEach(key => {
     let label = key;
     if (state.groupBy === 'due' || state.groupBy === 'created') {
-      if (key === 'No due date' || key === 'Unknown') {
-        label = key;
-      } else {
-        const d = new Date(key + 'T00:00:00');
-        label = d.toLocaleDateString(undefined, {weekday:'short', month:'long', day:'numeric'});
-        if (state.groupBy === 'due') label += ' — due';
+      if (key !== 'No due date' && key !== 'Unknown') {
+        const d = new Date(key+'T00:00:00');
+        label = d.toLocaleDateString(undefined,{weekday:'short',month:'long',day:'numeric'})+(state.groupBy==='due'?' — due':'');
       }
-    } else if (state.groupBy === 'category') {
-      label = (CAT_ICONS[key]||'🌟') + ' ' + (CAT_LABELS[key]||key);
+    } else {
+      label = (CAT_ICONS[key]||'🌟')+' '+(CAT_LABELS[key]||key);
     }
-    html += '<div class="group-date-header">' + label + '</div>';
-    html += '<div class="missions-list" style="margin-bottom:16px">' + groups[key].map(t => taskCardHTML(t)).join('') + '</div>';
+    html += `<div class="group-date-header">${label}</div>`;
+    html += `<div class="missions-list" style="margin-bottom:16px">${groups[key].map(t=>taskCardHTML(t)).join('')}</div>`;
   });
-
-  if (!html) {
-    html = '<div class="empty-state"><span class="rocket">🚀</span><p>No missions this month.</p></div>';
-  }
-
+  if (!html) html = `<div class="empty-state"><span class="rocket">🚀</span><p>No missions this month.</p></div>`;
   el.innerHTML = html;
+}
+
+/* ─── Levels ─── */
+function renderLevels() {
+  const curLv = getLevel();
+  document.getElementById('levelRoad').innerHTML = LEVELS.map((l,i) => `
+    <div class="level-item ${i===curLv?'current':''}">
+      <div class="level-badge">${LEVEL_ICONS[i]||'⭐'}</div>
+      <div>
+        <div class="level-name">Level ${i+1} — ${l.name}</div>
+        <div class="level-xp">${l.xp} XP ${i===curLv?'← You are here 🏍️':i<curLv?'✓ Achieved':''}</div>
+        ${i===curLv ? `<div class="xp-bar-track" style="margin-top:6px"><div class="xp-bar-fill" style="width:${Math.min(100,Math.round((state.xp-l.xp)/Math.max(1,(LEVELS[i+1]||{xp:state.xp+1}).xp-l.xp)*100))}%"></div></div>` : ''}
+      </div>
+    </div>`).join('');
 }
 
 /* ─── UI Controls ─── */
@@ -1287,16 +1391,12 @@ function switchTab(name, el, fromNav) {
   state.activeTab = name;
   document.querySelectorAll('.section-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  // Only clear main tab-bar buttons, not sub-nav inside monthly
   document.querySelectorAll('#app > .tab-bar .tab-btn').forEach(b=>b.classList.remove('active'));
   if (!fromNav) el.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   const navEl = document.getElementById('nav-'+name);
   if (navEl) navEl.classList.add('active');
-  if (name==='monthly') {
-    if (state.monthSub === 'list') renderMonthList();
-    else renderCalendar();
-  }
+  if (name==='monthly') { if(state.monthSub==='list') renderMonthList(); else renderCalendar(); }
   if (name==='levels') renderLevels();
 }
 
@@ -1304,7 +1404,7 @@ function switchFormTab(type, el) {
   document.querySelectorAll('.form-tab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('form-single').style.display = type==='single' ? '' : 'none';
-  document.getElementById('form-multi').style.display = type==='multi' ? '' : 'none';
+  document.getElementById('form-multi').style.display  = type==='multi'  ? '' : 'none';
 }
 
 function selectCat(el) {
@@ -1327,7 +1427,7 @@ function filterCat(el) {
 }
 
 /* ─── Modals ─── */
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m => {
   m.addEventListener('click', e => { if(e.target===m && m.id!=='welcomeModal') closeModal(m.id); });
@@ -1336,9 +1436,11 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 function openSettings() {
   document.getElementById('settingsName').value = state.name;
   openModal('settingsModal');
-  document.getElementById('nav-settings') && document.getElementById('nav-settings').classList.remove('active');
+  const ns = document.getElementById('nav-settings');
+  if (ns) ns.classList.remove('active');
 }
 function closeSettings() { closeModal('settingsModal'); }
+
 async function saveName() {
   state.name = document.getElementById('settingsName').value.trim() || state.name;
   try { localStorage.setItem('mc_name', state.name); } catch {}
@@ -1372,17 +1474,16 @@ function showLevelUp() {
 /* ─── Set today's date as default ─── */
 document.getElementById('taskDue').value = toDateStr(new Date());
 document.getElementById('multiFrom').value = toDateStr(new Date());
-const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+7);
-document.getElementById('multiTo').value = toDateStr(tomorrow);
-
+const _tomorrow = new Date(); _tomorrow.setDate(_tomorrow.getDate()+7);
+document.getElementById('multiTo').value = toDateStr(_tomorrow);
 
 /* ─── Theme Toggle ─── */
 function applyTheme(theme) {
   const isLight = theme === 'light';
   document.body.classList.toggle('light-mode', isLight);
   const btn = document.getElementById('themeToggleBtn');
-  if (btn) { btn.textContent = isLight ? '☀️' : '🌙'; btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode'; }
-  document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight ? '#f0f4ff' : '#0a0a1a');
+  if (btn) { btn.textContent = isLight ? '☀️' : '🌙'; btn.title = isLight?'Switch to dark mode':'Switch to light mode'; }
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight?'#f0f4ff':'#0a0a1a');
   try { localStorage.setItem('mc_theme', theme); } catch {}
 }
 function toggleTheme() {
@@ -1393,8 +1494,31 @@ function toggleTheme() {
   try { applyTheme(localStorage.getItem('mc_theme') || 'dark'); } catch { applyTheme('dark'); }
 })();
 
-/* ─── Start ─── */
-init();
+/* ─── Expose functions to inline onclick handlers ─── */
+// ES modules don't expose to global scope, so we explicitly attach to window
+window._openTask      = openTask;
+window._toggleTask    = toggleTask;
+window._selectCalDay  = selectCalDay;
+window.switchTab      = switchTab;
+window.switchFormTab  = switchFormTab;
+window.switchMonthSub = switchMonthSub;
+window.setGroupBy     = setGroupBy;
+window.selectCat      = selectCat;
+window.selectMultiCat = selectMultiCat;
+window.toggleDay      = toggleDay;
+window.filterCat      = filterCat;
+window.openSettings   = openSettings;
+window.closeSettings  = closeSettings;
+window.saveName       = saveName;
+window.saveWelcomeName= saveWelcomeName;
+window.addSingleTask  = addSingleTask;
+window.addMultiTask   = addMultiTask;
+window.deleteCurrentTask = deleteCurrentTask;
+window.closeTaskModal = closeTaskModal;
+window.toggleTheme    = toggleTheme;
+window.installApp     = installApp;
+window.prevMonth      = prevMonth;
+window.nextMonth      = nextMonth;
 
 /* ─── PWA Service Worker ─── */
 if ('serviceWorker' in navigator) {
