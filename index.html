@@ -915,10 +915,10 @@
 
 <script type="module">
 import { initializeApp }            from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-         getRedirectResult, onAuthStateChanged, signOut as fbSignOut }
+import { getAuth, GoogleAuthProvider, signInWithPopup,
+         onAuthStateChanged, signOut as fbSignOut }
                                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getDatabase, ref, get, set, push, patch, remove, child }
+import { getDatabase, ref, get, set, push, update, remove }
                                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
 
 /* ─── Firebase Init ─── */
@@ -955,7 +955,7 @@ async function fbDelete(path) {
   try { await remove(userRef(path)); } catch(e) { console.error('fbDelete', e); }
 }
 async function fbPatch(path, data) {
-  try { await patch(userRef(path), data); } catch(e) { console.error('fbPatch', e); }
+  try { await update(userRef(path), data); } catch(e) { console.error('fbPatch', e); }
 }
 
 /* ─── Auth UI ─── */
@@ -963,23 +963,25 @@ function showSignIn()  { document.getElementById('signinScreen').classList.remov
 function hideSignIn()  { document.getElementById('signinScreen').classList.add('hidden'); }
 
 window.signIn = async function() {
-  document.getElementById('signinError').textContent = '';
-  document.getElementById('signinLoading').style.display = 'block';
-  document.getElementById('googleSignInBtn').disabled = true;
+  const errEl  = document.getElementById('signinError');
+  const loadEl = document.getElementById('signinLoading');
+  const btn    = document.getElementById('googleSignInBtn');
+  errEl.textContent = '';
+  loadEl.style.display = 'block';
+  btn.disabled = true;
   try {
-    // Use redirect on mobile/PWA for reliability, popup on desktop
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                      || window.navigator.standalone;
-    if (isStandalone) {
-      await signInWithRedirect(auth, provider);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
+    await signInWithPopup(auth, provider);
+    // onAuthStateChanged will fire and take it from here
   } catch(e) {
     console.error('signIn error', e);
-    document.getElementById('signinError').textContent = 'Sign-in failed. Please try again.';
-    document.getElementById('signinLoading').style.display = 'none';
-    document.getElementById('googleSignInBtn').disabled = false;
+    const msg = e.code === 'auth/popup-blocked'
+      ? 'Popup was blocked. Please allow popups for this site.'
+      : e.code === 'auth/popup-closed-by-user'
+      ? 'Sign-in cancelled.'
+      : 'Sign-in failed: ' + (e.message || e.code);
+    errEl.textContent = msg;
+    loadEl.style.display = 'none';
+    btn.disabled = false;
   }
 };
 
@@ -991,9 +993,6 @@ window.signOut = async function() {
 };
 
 /* ─── Auth State ─── */
-// Handle redirect result first (for PWA/mobile redirect flow)
-getRedirectResult(auth).catch(e => console.error('redirect result', e));
-
 onAuthStateChanged(auth, async user => {
   if (user) {
     uid = user.uid;
