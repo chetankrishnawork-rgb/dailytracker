@@ -7,22 +7,22 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0a1a">
 <title>Mission Control 🚀</title>
-
+ 
 <!-- PWA manifest -->
 <link rel="manifest" href="manifest.json">
-
+ 
 <!-- iOS home screen icon -->
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
-
+ 
 <!-- iOS splash / standalone tweaks -->
 <meta name="apple-mobile-web-app-title" content="Mission Control">
 <meta name="mobile-web-app-capable" content="yes">
 <style>
   /* ─── Reset & Base ─── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
   :root {
     --space-dark: #0a0a1a;
     --space-mid: #11112a;
@@ -42,17 +42,48 @@
     --radius-md: 16px;
     --radius-lg: 24px;
     --radius-xl: 32px;
-
+ 
     /* safe area for notch/home bar */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
-
+ 
     /* touch target minimum */
     --touch-min: 48px;
   }
-
+ 
+  /* ─── Light Mode ─── */
+  body.light-mode {
+    --space-dark: #f0f4ff;
+    --space-mid: #e4eaf8;
+    --space-card: #ffffff;
+    --space-card2: #eef2fc;
+    --text-primary: #1a1a3a;
+    --text-secondary: #4a4a7a;
+    --text-muted: #8888bb;
+    --border: rgba(100,80,200,0.15);
+    --border-bright: rgba(100,80,200,0.4);
+    --accent: #6a44f0;
+    --accent2: #3a6fef;
+    --accent3: #e0457a;
+    --accent4: #c08800;
+    --accent5: #04a87a;
+  }
+  body.light-mode::before { display: none; }
+  body.light-mode .form-input,
+  body.light-mode .form-select {
+    background: #f5f7ff;
+    color: var(--text-primary);
+    color-scheme: light;
+  }
+  body.light-mode .controls-row select { background-color: var(--space-card); color-scheme: light; }
+  body.light-mode input[type="date"] { color-scheme: light; filter: none; }
+  body.light-mode input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+  body.light-mode .bottom-nav { background: rgba(240,244,255,0.93); }
+  body.light-mode .mission-card { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  body.light-mode .stat-card { box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+ 
   html, body {
     width: 100%; min-height: 100%; overflow-x: hidden;
     background: var(--space-dark);
@@ -62,7 +93,7 @@
     -webkit-text-size-adjust: 100%;
     touch-action: manipulation;
   }
-
+ 
   /* Stars bg */
   body::before {
     content: '';
@@ -79,7 +110,7 @@
       radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
       radial-gradient(2px 2px at 50% 50%, rgba(124,92,252,0.3) 0%, transparent 100%);
   }
-
+ 
   /* ─── Layout ─── */
   #app {
     position: relative; z-index: 1;
@@ -87,7 +118,7 @@
     padding: calc(var(--safe-top) + 12px) calc(16px + var(--safe-right)) calc(var(--safe-bottom) + 80px) calc(16px + var(--safe-left));
     min-height: 100vh;
   }
-
+ 
   /* ─── Top Header ─── */
   .header {
     display: flex; align-items: center; justify-content: space-between;
@@ -109,7 +140,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   .icon-btn:active { background: var(--space-card2); }
-
+ 
   /* ─── Commander Banner ─── */
   .commander-banner {
     background: linear-gradient(135deg, rgba(124,92,252,0.2), rgba(91,143,255,0.1));
@@ -128,7 +159,7 @@
   .commander-info { flex: 1; min-width: 0; }
   .commander-name { font-size: 15px; font-weight: 600; }
   .commander-level { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-
+ 
   /* ─── XP Bar ─── */
   .xp-bar-track {
     height: 8px; background: rgba(255,255,255,0.08);
@@ -139,7 +170,7 @@
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     transition: width 0.6s cubic-bezier(0.25,1,0.5,1);
   }
-
+ 
   /* ─── Stats Row ─── */
   .stats-row {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
@@ -158,7 +189,7 @@
   .stat-streak .stat-value { color: var(--accent3); }
   .stat-done .stat-value { color: var(--accent5); }
   .stat-today .stat-value { color: var(--accent4); }
-
+ 
   /* ─── Tab Bar ─── */
   .tab-bar {
     display: flex; gap: 6px; margin-bottom: 20px;
@@ -178,14 +209,14 @@
     background: var(--accent); border-color: var(--accent);
     color: #fff;
   }
-
+ 
   /* ─── Section Title ─── */
   .section-title {
     font-size: 18px; font-weight: 700; margin-bottom: 16px;
     display: flex; align-items: center; gap: 8px;
   }
   .section-title span { font-size: 20px; }
-
+ 
   /* ─── Add Mission Form ─── */
   .add-mission-card {
     background: var(--space-card); border: 1px solid var(--border);
@@ -201,7 +232,7 @@
     cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
   }
   .form-tab.active { background: rgba(124,92,252,0.2); border-color: var(--accent); color: var(--accent); }
-
+ 
   .form-group { margin-bottom: 14px; }
   .form-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; display: block; }
   .form-input, .form-select, .form-textarea {
@@ -214,7 +245,7 @@
   }
   .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent); }
   .form-select { padding-right: 36px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0cc' fill='none' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: calc(100% - 12px) 50%; }
-
+ 
   .categories-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
   }
@@ -226,7 +257,7 @@
     display: flex; align-items: center; justify-content: center; gap: 4px;
   }
   .cat-btn.active { background: rgba(124,92,252,0.25); border-color: var(--accent); }
-
+ 
   .launch-btn {
     width: 100%; height: 52px; border-radius: var(--radius-md);
     background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -235,7 +266,7 @@
     -webkit-tap-highlight-color: transparent; letter-spacing: 0.5px;
   }
   .launch-btn:active { opacity: 0.85; transform: scale(0.98); }
-
+ 
   /* ─── Mission Cards ─── */
   .missions-list { display: flex; flex-direction: column; gap: 10px; }
   .mission-card {
@@ -255,11 +286,11 @@
   .mission-card.cat-personal::before { background: var(--accent3); }
   .mission-card.cat-leadership::before { background: var(--accent4); }
   .mission-card.cat-other::before { background: var(--text-muted); }
-
+ 
   .mission-card:active { transform: scale(0.98); border-color: var(--accent); }
   .mission-card.completed { opacity: 0.5; }
   .mission-card.completed .mission-title { text-decoration: line-through; }
-
+ 
   .mission-check {
     width: 28px; height: 28px; border-radius: 50%;
     border: 2px solid var(--border-bright); background: transparent;
@@ -268,7 +299,7 @@
   }
   .mission-check.done { background: var(--accent5); border-color: var(--accent5); }
   .mission-check.done::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
-
+ 
   .mission-info { flex: 1; min-width: 0; }
   .mission-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mission-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -278,9 +309,9 @@
   }
   .mission-due { font-size: 11px; color: var(--text-secondary); }
   .mission-due.overdue { color: var(--accent3); }
-
+ 
   .mission-xp { font-size: 12px; color: var(--accent4); font-weight: 600; }
-
+ 
   /* ─── Calendar View ─── */
   .calendar-nav {
     display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
@@ -312,7 +343,7 @@
     width: 4px; height: 4px; border-radius: 50%; background: var(--accent4);
   }
   .cal-day.other-month { opacity: 0.3; }
-
+ 
   /* ─── Multi-day date pickers ─── */
   .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .weekday-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 10px 0; }
@@ -322,7 +353,7 @@
     cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all 0.2s;
   }
   .wd-btn.active { background: rgba(124,92,252,0.25); border-color: var(--accent); color: var(--accent); }
-
+ 
   /* ─── Level Roadmap ─── */
   .level-road {
     display: flex; flex-direction: column; gap: 12px;
@@ -340,7 +371,7 @@
   .level-item.current .level-badge { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
   .level-name { font-size: 14px; font-weight: 600; }
   .level-xp { font-size: 12px; color: var(--text-secondary); }
-
+ 
   /* ─── Filter Row ─── */
   .filter-row {
     display: flex; gap: 8px; margin-bottom: 16px;
@@ -355,7 +386,7 @@
     transition: all 0.2s; -webkit-tap-highlight-color: transparent;
   }
   .filter-chip.active { background: rgba(124,92,252,0.2); border-color: var(--accent); color: var(--accent); }
-
+ 
   /* ─── Sort / Group controls ─── */
   .controls-row {
     display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
@@ -368,12 +399,12 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236060a0' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: calc(100% - 10px) 50%;
   }
-
+ 
   /* ─── Empty State ─── */
   .empty-state { text-align: center; padding: 48px 20px; }
   .empty-state .rocket { font-size: 52px; display: block; margin-bottom: 16px; }
   .empty-state p { color: var(--text-secondary); font-size: 14px; }
-
+ 
   /* ─── Bottom Nav (mobile) ─── */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -396,7 +427,7 @@
   .nav-item.active { color: var(--accent); }
   .nav-icon { font-size: 22px; line-height: 1; }
   .nav-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
+ 
   /* ─── Modals ─── */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 200;
@@ -428,7 +459,7 @@
   }
   .modal-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
   .modal-btn.danger { background: rgba(255,107,157,0.2); border-color: var(--accent3); color: var(--accent3); }
-
+ 
   /* ─── Level Up Toast ─── */
   .levelup-toast {
     position: fixed; top: calc(var(--safe-top) + 20px); left: 50%;
@@ -440,13 +471,13 @@
     white-space: nowrap; pointer-events: none;
   }
   .levelup-toast.show { transform: translateX(-50%) translateY(0); }
-
+ 
   /* ─── Welcome Modal ─── */
   .welcome-content { text-align: center; padding: 20px 0; }
   .welcome-rocket { font-size: 64px; display: block; margin-bottom: 16px; }
   .welcome-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
   .welcome-sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
-
+ 
   /* ─── Settings ─── */
   .settings-row {
     display: flex; align-items: center; justify-content: space-between;
@@ -455,7 +486,7 @@
   .settings-row:last-child { border-bottom: none; }
   .settings-label { font-size: 15px; }
   .settings-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-
+ 
   /* ─── iPad / tablet breakpoint ─── */
   @media (min-width: 600px) {
     #app { padding-left: calc(24px + var(--safe-left)); padding-right: calc(24px + var(--safe-right)); }
@@ -466,7 +497,7 @@
     .modal-overlay { align-items: center; padding-bottom: 0; }
     .bottom-nav-inner { padding: 0 24px; }
   }
-
+ 
   /* ─── Large tablet / split-view ─── */
   @media (min-width: 768px) {
     .header-logo { font-size: 22px; }
@@ -476,7 +507,7 @@
     .form-tab { height: 44px; font-size: 14px; }
     .launch-btn { font-size: 17px; }
   }
-
+ 
   /* ─── Desktop ─── */
   @media (min-width: 900px) {
     .bottom-nav { display: none; }
@@ -487,35 +518,101 @@
     .sidebar-left { width: 220px; flex-shrink: 0; }
     .sidebar-main { flex: 1; min-width: 0; }
   }
-
+ 
   /* Prevent double-tap zoom on buttons */
   button, a { touch-action: manipulation; }
-
+ 
   /* Scrollable sections */
   .scroll-section { -webkit-overflow-scrolling: touch; }
-
+ 
   /* Accessibility */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
   }
-
+ 
   /* Active/completed sections */
   .section-panel { display: none; }
   .section-panel.active { display: block; }
+ 
+  /* ─── Toast Notification ─── */
+  .toast {
+    position: fixed; bottom: calc(var(--safe-bottom) + 72px); left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--space-card2); border: 1px solid var(--border-bright);
+    color: var(--text-primary); padding: 12px 20px; border-radius: 99px;
+    font-size: 14px; font-weight: 600; z-index: 400; pointer-events: none;
+    opacity: 0; transition: opacity 0.25s, transform 0.25s;
+    white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (min-width: 900px) { .toast { bottom: 24px; } }
+ 
+  /* ─── Daily Progress Bar ─── */
+  .daily-progress {
+    background: var(--space-card); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 20px;
+  }
+  .daily-progress-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+  }
+  .daily-progress-label { font-size: 13px; color: var(--text-secondary); }
+  .daily-progress-count { font-size: 13px; font-weight: 700; color: var(--accent5); }
+  .daily-progress-track {
+    height: 10px; background: rgba(255,255,255,0.07);
+    border-radius: 99px; overflow: hidden;
+  }
+  .daily-progress-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent5), var(--accent2));
+    transition: width 0.6s cubic-bezier(0.25,1,0.5,1);
+  }
+  .daily-progress-fill.full { background: linear-gradient(90deg, var(--accent5), var(--accent4)); }
+ 
+  /* ─── Overdue card highlight ─── */
+  .mission-card.overdue-card {
+    border-color: rgba(255,107,157,0.4);
+    background: rgba(255,107,157,0.05);
+  }
+  .mission-card.overdue-card::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255,107,157,0.3); pointer-events: none;
+  }
+ 
+  /* ─── Group-by controls (monthly list) ─── */
+  .groupby-bar {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .groupby-label { font-size: 12px; color: var(--text-secondary); flex-shrink: 0; }
+  .groupby-btn {
+    height: 34px; padding: 0 12px; border-radius: 99px;
+    border: 1px solid var(--border); background: var(--space-card);
+    color: var(--text-secondary); font-size: 12px; cursor: pointer;
+    transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+  }
+  .groupby-btn.active { background: rgba(124,92,252,0.2); border-color: var(--accent); color: var(--accent); }
+ 
+  /* ─── Group date header in monthly list ─── */
+  .group-date-header {
+    font-size: 12px; font-weight: 700; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 12px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+  }
+  .group-date-header.overdue-header { color: var(--accent3); }
 </style>
 </head>
 <body>
-
+ 
 <div id="app">
   <!-- HEADER -->
   <header class="header">
     <div class="header-logo"><span>🚀</span> MISSION CONTROL</div>
     <div class="header-right">
       <button class="icon-btn" id="installBtn" onclick="installApp()" aria-label="Install app" style="display:none; background:linear-gradient(135deg,rgba(124,92,252,0.3),rgba(91,143,255,0.2)); border-color:var(--accent);" title="Install as app">📲</button>
+      <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle light/dark mode">🌙</button>
       <button class="icon-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
     </div>
   </header>
-
+ 
   <!-- COMMANDER BANNER -->
   <div class="commander-banner" id="commanderBanner">
     <div class="commander-avatar">🧑‍🚀</div>
@@ -525,7 +622,7 @@
       <div class="xp-bar-track"><div class="xp-bar-fill" id="xpBar" style="width:0%"></div></div>
     </div>
   </div>
-
+ 
   <!-- STATS -->
   <div class="stats-row">
     <div class="stat-card stat-streak" data-icon="🔥">
@@ -541,14 +638,25 @@
       <div class="stat-label">Today</div>
     </div>
   </div>
-
+ 
+  <!-- DAILY PROGRESS BAR -->
+  <div class="daily-progress" id="dailyProgress">
+    <div class="daily-progress-header">
+      <span class="daily-progress-label">⚡ Today's missions</span>
+      <span class="daily-progress-count" id="progressCount">0 / 0</span>
+    </div>
+    <div class="daily-progress-track">
+      <div class="daily-progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+ 
   <!-- MAIN TABS -->
   <div class="tab-bar" role="tablist">
     <button class="tab-btn active" onclick="switchTab('today', this)" role="tab">🎯 Today</button>
     <button class="tab-btn" onclick="switchTab('monthly', this)" role="tab">📅 Monthly</button>
     <button class="tab-btn" onclick="switchTab('levels', this)" role="tab">⭐ Levels</button>
   </div>
-
+ 
   <!-- TODAY TAB -->
   <div class="section-panel active" id="tab-today">
     <!-- Add Mission -->
@@ -557,7 +665,7 @@
         <button class="form-tab active" onclick="switchFormTab('single', this)">⚡ Single Mission</button>
         <button class="form-tab" onclick="switchFormTab('multi', this)">📅 Multi-Day Mission</button>
       </div>
-
+ 
       <!-- Single Mission Form -->
       <div id="form-single">
         <div class="form-group">
@@ -580,7 +688,7 @@
         </div>
         <button class="launch-btn" onclick="addSingleTask()">LAUNCH! 🚀</button>
       </div>
-
+ 
       <!-- Multi-Day Mission Form -->
       <div id="form-multi" style="display:none">
         <div class="form-group">
@@ -625,7 +733,7 @@
         <button class="launch-btn" onclick="addMultiTask()">LAUNCH ALL! 🚀</button>
       </div>
     </div>
-
+ 
     <!-- Filters -->
     <div class="filter-row" id="catFilter" role="group" aria-label="Filter by category">
       <button class="filter-chip active" data-cat="all" onclick="filterCat(this)">All</button>
@@ -635,33 +743,53 @@
       <button class="filter-chip" data-cat="leadership" onclick="filterCat(this)">🦁 Leadership</button>
       <button class="filter-chip" data-cat="other" onclick="filterCat(this)">🌟 Other</button>
     </div>
-
+ 
     <div class="section-title"><span>🚀</span> Active Missions</div>
     <div class="missions-list" id="activeMissions"></div>
-
+ 
     <div class="section-title" style="margin-top:24px"><span>🏆</span> Completed</div>
     <div class="missions-list" id="completedMissions"></div>
   </div>
-
+ 
   <!-- MONTHLY TAB -->
   <div class="section-panel" id="tab-monthly">
-    <div class="calendar-nav">
-      <button class="cal-arrow" onclick="prevMonth()">‹</button>
-      <div class="cal-title" id="calTitle"></div>
-      <button class="cal-arrow" onclick="nextMonth()">›</button>
+    <!-- Sub-nav: Calendar / List -->
+    <div class="tab-bar" style="margin-bottom:16px">
+      <button class="tab-btn active" id="subCalBtn" onclick="switchMonthSub('calendar',this)">🗓 Calendar</button>
+      <button class="tab-btn" id="subListBtn" onclick="switchMonthSub('list',this)">📋 List</button>
     </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div class="section-title" style="margin-top:8px"><span>📋</span> Tasks for <span id="calDayTitle">Today</span></div>
-    <div class="missions-list" id="calDayTasks"></div>
+ 
+    <!-- Calendar sub-view -->
+    <div id="monthSubCalendar">
+      <div class="calendar-nav">
+        <button class="cal-arrow" onclick="prevMonth()">‹</button>
+        <div class="cal-title" id="calTitle"></div>
+        <button class="cal-arrow" onclick="nextMonth()">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="section-title" style="margin-top:8px"><span>📋</span> Tasks for <span id="calDayTitle">Today</span></div>
+      <div class="missions-list" id="calDayTasks"></div>
+    </div>
+ 
+    <!-- List sub-view -->
+    <div id="monthSubList" style="display:none">
+      <div class="groupby-bar">
+        <span class="groupby-label">Group by:</span>
+        <button class="groupby-btn active" data-group="due" onclick="setGroupBy(this)">Due date</button>
+        <button class="groupby-btn" data-group="created" onclick="setGroupBy(this)">Created date</button>
+        <button class="groupby-btn" data-group="category" onclick="setGroupBy(this)">Category</button>
+      </div>
+      <div id="monthListContent"></div>
+    </div>
   </div>
-
+ 
   <!-- LEVELS TAB -->
   <div class="section-panel" id="tab-levels">
     <div class="section-title"><span>⭐</span> Level Roadmap</div>
     <div class="level-road" id="levelRoad"></div>
   </div>
 </div>
-
+ 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
   <div class="bottom-nav-inner">
@@ -683,7 +811,7 @@
     </button>
   </div>
 </nav>
-
+ 
 <!-- WELCOME MODAL -->
 <div class="modal-overlay" id="welcomeModal">
   <div class="modal-sheet">
@@ -697,7 +825,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal-sheet">
@@ -716,7 +844,7 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- TASK DETAIL MODAL -->
 <div class="modal-overlay" id="taskModal">
   <div class="modal-sheet">
@@ -729,28 +857,42 @@
     </div>
   </div>
 </div>
-
+ 
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+ 
 <!-- LEVEL UP TOAST -->
 <div class="levelup-toast" id="levelupToast">⭐ LEVEL UP! You're amazing!</div>
-
+ 
 <script>
 const FIREBASE = 'https://dailytrackerforkids-default-rtdb.firebaseio.com';
 let state = {
   name: '', xp: 0, streak: 0, tasks: [],
   currentFilter: 'all', calYear: new Date().getFullYear(), calMonth: new Date().getMonth(),
   calSelected: new Date(), currentTaskId: null,
-  formCat: 'school', multiCat: 'school', selectedDays: [0,1,2,3,4,5,6]
+  formCat: 'school', multiCat: 'school', selectedDays: [0,1,2,3,4,5,6],
+  monthSub: 'calendar', groupBy: 'due', lastDate: null
 };
-
+ 
 const LEVELS = [
   { name:'Cadet', xp:0 }, { name:'Explorer', xp:100 }, { name:'Pilot', xp:250 },
   { name:'Commander', xp:500 }, { name:'Captain', xp:800 }, { name:'Colonel', xp:1200 },
   { name:'General', xp:1800 }, { name:'Admiral', xp:2500 }, { name:'Legend', xp:3500 },
   { name:'Galaxy Hero', xp:5000 }
 ];
-const CAT_ICONS = { school:'📚', sport:'⚽', personal:'🎮', leadership:'🦁', other:'🌟' };
+const CAT_ICONS  = { school:'📚', sport:'⚽', personal:'🎮', leadership:'🦁', other:'🌟' };
 const CAT_LABELS = { school:'School', sport:'Sport', personal:'Personal', leadership:'Leadership', other:'Other' };
-
+const CAT_XP     = { school:20, sport:15, personal:10, leadership:25, other:10 };
+ 
+ 
+/* ─── Toast ─── */
+function showToast(msg, ms=2800) {
+  const el = document.getElementById('toastEl');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), ms);
+}
+ 
 /* ─── Firebase ─── */
 async function fbGet(path) {
   try { const r = await fetch(FIREBASE+path+'.json'); return r.ok ? r.json() : null; } catch { return null; }
@@ -764,7 +906,7 @@ async function fbPush(path, data) {
 async function fbDelete(path) {
   try { await fetch(FIREBASE+path+'.json', {method:'DELETE'}); } catch {}
 }
-
+ 
 /* ─── Init ─── */
 async function init() {
   const data = await fbGet('/');
@@ -772,6 +914,7 @@ async function init() {
     state.name = data.name || '';
     state.xp = data.xp || 0;
     state.streak = data.streak || 0;
+    state.lastDate = data.lastDate || null;
     if (data.tasks) {
       state.tasks = Object.entries(data.tasks).map(([id,t]) => ({id, ...t}));
     }
@@ -779,14 +922,16 @@ async function init() {
   if (!state.name) { openModal('welcomeModal'); }
   renderAll();
 }
-
+ 
 function renderAll() {
   updateHeader();
+  renderDailyProgress();
   renderTasks();
   renderCalendar();
   renderLevels();
+  if (state.monthSub === 'list') renderMonthList();
 }
-
+ 
 /* ─── Header / Stats ─── */
 function getLevel() {
   let lv = 0;
@@ -807,7 +952,7 @@ function updateHeader() {
   document.getElementById('completedCount').textContent = state.tasks.filter(t=>t.done).length;
   document.getElementById('todayCount').textContent = todayActive;
 }
-
+ 
 /* ─── Task Rendering ─── */
 function toDateStr(d) {
   return d.toFullYear ? d.toFullYear() : d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -821,19 +966,35 @@ function isOverdue(t) {
   if (!t.due || t.done) return false;
   return t.due < toDateStr(new Date());
 }
-
+ 
+ 
+/* ─── Daily Progress Bar ─── */
+function renderDailyProgress() {
+  const today = toDateStr(new Date());
+  const todayTasks = state.tasks.filter(t => !t.due || t.due === today || (!t.done && t.due <= today));
+  // simpler: all tasks due today or with no due date
+  const todayAll = state.tasks.filter(t => t.due === today || (!t.due));
+  const todayDone = todayAll.filter(t => t.done).length;
+  const total = todayAll.length;
+  const pct = total === 0 ? 0 : Math.round(todayDone / total * 100);
+  document.getElementById('progressCount').textContent = todayDone + ' / ' + total + ' done';
+  const fill = document.getElementById('progressFill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('full', pct === 100);
+}
+ 
 function renderTasks() {
   const cat = state.currentFilter;
   let active = state.tasks.filter(t => !t.done && (cat==='all' || t.category===cat));
   let done = state.tasks.filter(t => t.done && (cat==='all' || t.category===cat));
-
+ 
   active.sort((a,b) => (a.due||'9999') < (b.due||'9999') ? -1 : 1);
   done.sort((a,b) => (a.completedDate||'') < (b.completedDate||'') ? 1 : -1);
-
+ 
   renderMissionList('activeMissions', active);
   renderMissionList('completedMissions', done);
 }
-
+ 
 function renderMissionList(elId, tasks) {
   const el = document.getElementById(elId);
   if (tasks.length === 0) {
@@ -842,24 +1003,25 @@ function renderMissionList(elId, tasks) {
   }
   el.innerHTML = tasks.map(t => taskCardHTML(t)).join('');
 }
-
+ 
 function taskCardHTML(t) {
   const overdue = isOverdue(t);
-  return `<div class="mission-card cat-${t.category} ${t.done?'completed':''}" onclick="openTask('${t.id}')">
-    <div class="mission-check ${t.done?'done':''}" onclick="toggleTask(event,'${t.id}')"></div>
-    <div class="mission-info">
-      <div class="mission-title">${escHtml(t.name)}</div>
-      <div class="mission-meta">
-        <span class="mission-tag">${CAT_ICONS[t.category]||'🌟'} ${CAT_LABELS[t.category]||t.category}</span>
-        ${t.due ? `<span class="mission-due ${overdue?'overdue':''}">${overdue?'⚠ Overdue · ':''} ${formatDate(t.due)}</span>` : ''}
-        <span class="mission-xp">+10 XP</span>
-      </div>
-    </div>
-  </div>`;
+  const xp = CAT_XP[t.category] || 10;
+  return '<div class="mission-card cat-'+t.category+' '+(t.done?'completed':'')+' '+(overdue?'overdue-card':'')+'" onclick="openTask(''+t.id+'')">'+
+    '<div class="mission-check '+(t.done?'done':'')+'" onclick="toggleTask(event,''+t.id+'')"></div>'+
+    '<div class="mission-info">'+
+      '<div class="mission-title">'+escHtml(t.name)+'</div>'+
+      '<div class="mission-meta">'+
+        '<span class="mission-tag">'+(CAT_ICONS[t.category]||'🌟')+' '+(CAT_LABELS[t.category]||t.category)+'</span>'+
+        (t.due ? '<span class="mission-due '+(overdue?'overdue':'')+'>'+(overdue?'⚠ Overdue · ':'')+formatDate(t.due)+'</span>' : '')+
+        '<span class="mission-xp">+'+xp+' XP</span>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
 }
-
+ 
 function escHtml(s) { return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
+ 
 /* ─── Task Actions ─── */
 async function addSingleTask() {
   const name = document.getElementById('taskName').value.trim();
@@ -867,9 +1029,9 @@ async function addSingleTask() {
   const due = document.getElementById('taskDue').value;
   const task = { name, category: state.formCat, due: due||null, done: false, created: toDateStr(new Date()) };
   const id = await fbPush('/tasks', task);
-  if (id) { state.tasks.push({id, ...task}); document.getElementById('taskName').value=''; renderAll(); }
+  if (id) { state.tasks.push({id, ...task}); document.getElementById('taskName').value=''; renderAll(); showToast('🚀 Mission launched!'); }
 }
-
+ 
 async function addMultiTask() {
   const name = document.getElementById('multiTaskName').value.trim();
   const from = document.getElementById('multiFrom').value;
@@ -888,38 +1050,62 @@ async function addMultiTask() {
     cur.setDate(cur.getDate()+1); count++;
   }
   document.getElementById('multiTaskName').value='';
-  renderAll();
+  renderAll(); showToast('🚀 Multi-day missions launched!');
 }
-
+ 
 async function toggleTask(e, id) {
   e.stopPropagation();
   const t = state.tasks.find(x=>x.id===id);
   if (!t) return;
   t.done = !t.done;
   t.completedDate = t.done ? toDateStr(new Date()) : null;
+ 
+  const earned = CAT_XP[t.category] || 10;
   const oldXp = state.xp;
-  if (t.done) { state.xp += 10; } else { state.xp = Math.max(0, state.xp-10); }
+  if (t.done) {
+    state.xp += earned;
+    updateStreak();
+  } else {
+    state.xp = Math.max(0, state.xp - earned);
+  }
+ 
   await fbSet('/tasks/'+id, {name:t.name,category:t.category,due:t.due,done:t.done,created:t.created,completedDate:t.completedDate||null});
   await fbSet('/xp', state.xp);
+  await fbSet('/streak', state.streak);
+  await fbSet('/lastDate', state.lastDate);
+ 
   const oldLv = getLevelFromXp(oldXp), newLv = getLevel();
   if (t.done && newLv > oldLv) showLevelUp();
+  showToast(t.done ? '\u2705 Mission complete! +' + earned + ' XP' : '\u21a9 Mission reopened');
   renderAll();
 }
-
+ 
+function updateStreak() {
+  const today = toDateStr(new Date());
+  if (state.lastDate === today) return; // already counted today
+  const yesterday = toDateStr(new Date(Date.now() - 86400000));
+  if (state.lastDate === yesterday) {
+    state.streak += 1; // consecutive day — extend streak
+  } else {
+    state.streak = 1;  // gap or first ever — reset to 1
+  }
+  state.lastDate = today;
+}
+ 
 function getLevelFromXp(xp) {
   let lv = 0;
   for (let i = LEVELS.length-1; i >= 0; i--) { if (xp >= LEVELS[i].xp) { lv = i; break; } }
   return lv;
 }
-
+ 
 async function deleteCurrentTask() {
   const id = state.currentTaskId;
   if (!id) return;
   await fbDelete('/tasks/'+id);
   state.tasks = state.tasks.filter(t=>t.id!==id);
-  closeTaskModal(); renderAll();
+  closeTaskModal(); renderAll(); showToast('🗑 Mission deleted');
 }
-
+ 
 /* ─── Task Detail Modal ─── */
 function openTask(id) {
   const t = state.tasks.find(x=>x.id===id);
@@ -939,7 +1125,7 @@ function openTask(id) {
   openModal('taskModal');
 }
 function closeTaskModal() { closeModal('taskModal'); }
-
+ 
 /* ─── Calendar ─── */
 function renderCalendar() {
   const y = state.calYear, m = state.calMonth;
@@ -962,14 +1148,14 @@ function renderCalendar() {
   document.getElementById('calGrid').innerHTML = html;
   renderCalDayTasks();
 }
-
+ 
 function selectCalDay(ds) {
   state.calSelected = new Date(ds+'T00:00:00');
   renderCalendar();
 }
 function prevMonth() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
 function nextMonth() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
-
+ 
 function renderCalDayTasks() {
   const ds = toDateStr(state.calSelected);
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -980,7 +1166,7 @@ function renderCalDayTasks() {
   if (tasks.length===0) { el.innerHTML=`<div class="empty-state"><span class="rocket">🚀</span><p>No missions on this day.</p></div>`; return; }
   el.innerHTML = tasks.map(t=>taskCardHTML(t)).join('');
 }
-
+ 
 /* ─── Levels ─── */
 function renderLevels() {
   const curLv = getLevel();
@@ -994,7 +1180,89 @@ function renderLevels() {
       </div>
     </div>`).join('');
 }
-
+ 
+ 
+/* ─── Monthly List View ─── */
+function switchMonthSub(sub, el) {
+  state.monthSub = sub;
+  document.querySelectorAll('#tab-monthly .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('monthSubCalendar').style.display = sub === 'calendar' ? '' : 'none';
+  document.getElementById('monthSubList').style.display = sub === 'list' ? '' : 'none';
+  if (sub === 'list') renderMonthList();
+}
+ 
+function setGroupBy(el) {
+  document.querySelectorAll('.groupby-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  state.groupBy = el.dataset.group;
+  renderMonthList();
+}
+ 
+function renderMonthList() {
+  const el = document.getElementById('monthListContent');
+  const tasks = state.tasks.slice();
+  const today = toDateStr(new Date());
+ 
+  // Separate overdue for special header
+  const overdue = tasks.filter(t => !t.done && t.due && t.due < today);
+  const rest = tasks.filter(t => !((!t.done && t.due && t.due < today)));
+ 
+  let groups = {};
+ 
+  if (state.groupBy === 'due') {
+    rest.forEach(t => {
+      const key = t.due || 'No due date';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(t);
+    });
+  } else if (state.groupBy === 'created') {
+    rest.forEach(t => {
+      const key = t.created || 'Unknown';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(t);
+    });
+  } else if (state.groupBy === 'category') {
+    rest.forEach(t => {
+      const key = t.category || 'other';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(t);
+    });
+  }
+ 
+  let html = '';
+ 
+  // Overdue section first
+  if (overdue.length > 0) {
+    html += '<div class="group-date-header overdue-header">⚠ Overdue (' + overdue.length + ')</div>';
+    html += '<div class="missions-list" style="margin-bottom:16px">' + overdue.map(t => taskCardHTML(t)).join('') + '</div>';
+  }
+ 
+  const sortedKeys = Object.keys(groups).sort();
+  sortedKeys.forEach(key => {
+    let label = key;
+    if (state.groupBy === 'due' || state.groupBy === 'created') {
+      if (key === 'No due date' || key === 'Unknown') {
+        label = key;
+      } else {
+        const d = new Date(key + 'T00:00:00');
+        label = d.toLocaleDateString(undefined, {weekday:'short', month:'long', day:'numeric'});
+        if (state.groupBy === 'due') label += ' — due';
+      }
+    } else if (state.groupBy === 'category') {
+      label = (CAT_ICONS[key]||'🌟') + ' ' + (CAT_LABELS[key]||key);
+    }
+    html += '<div class="group-date-header">' + label + '</div>';
+    html += '<div class="missions-list" style="margin-bottom:16px">' + groups[key].map(t => taskCardHTML(t)).join('') + '</div>';
+  });
+ 
+  if (!html) {
+    html = '<div class="empty-state"><span class="rocket">🚀</span><p>No missions this month.</p></div>';
+  }
+ 
+  el.innerHTML = html;
+}
+ 
 /* ─── UI Controls ─── */
 function switchTab(name, el, fromNav) {
   document.querySelectorAll('.section-panel').forEach(p=>p.classList.remove('active'));
@@ -1007,14 +1275,14 @@ function switchTab(name, el, fromNav) {
   if (name==='monthly') renderCalendar();
   if (name==='levels') renderLevels();
 }
-
+ 
 function switchFormTab(type, el) {
   document.querySelectorAll('.form-tab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('form-single').style.display = type==='single' ? '' : 'none';
   document.getElementById('form-multi').style.display = type==='multi' ? '' : 'none';
 }
-
+ 
 function selectCat(el) {
   document.querySelectorAll('#form-single .cat-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active'); state.formCat = el.dataset.cat;
@@ -1033,14 +1301,14 @@ function filterCat(el) {
   document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('active'));
   el.classList.add('active'); state.currentFilter = el.dataset.cat; renderTasks();
 }
-
+ 
 /* ─── Modals ─── */
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m => {
   m.addEventListener('click', e => { if(e.target===m && m.id!=='welcomeModal') closeModal(m.id); });
 });
-
+ 
 function openSettings() {
   document.getElementById('settingsName').value = state.name;
   openModal('settingsModal');
@@ -1056,7 +1324,7 @@ async function saveWelcomeName() {
   if (!n) { document.getElementById('welcomeName').focus(); return; }
   state.name = n; await fbSet('/name', n); closeModal('welcomeModal'); updateHeader();
 }
-
+ 
 async function installApp() {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
@@ -1064,7 +1332,7 @@ async function installApp() {
   deferredPrompt = null;
   document.getElementById('installBtn').style.display = 'none';
 }
-
+ 
 /* 250025002500 Level Up Toast 250025002500 */
 function showLevelUp() {
   const lv = getLevel();
@@ -1073,16 +1341,34 @@ function showLevelUp() {
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
-
+ 
 /* ─── Set today's date as default ─── */
 document.getElementById('taskDue').value = toDateStr(new Date());
 document.getElementById('multiFrom').value = toDateStr(new Date());
 const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+7);
 document.getElementById('multiTo').value = toDateStr(tomorrow);
-
+ 
+ 
+/* ─── Theme Toggle ─── */
+function applyTheme(theme) {
+  const isLight = theme === 'light';
+  document.body.classList.toggle('light-mode', isLight);
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) { btn.textContent = isLight ? '☀️' : '🌙'; btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode'; }
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight ? '#f0f4ff' : '#0a0a1a');
+  try { localStorage.setItem('mc_theme', theme); } catch {}
+}
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light-mode');
+  applyTheme(isLight ? 'dark' : 'light');
+}
+(function() {
+  try { applyTheme(localStorage.getItem('mc_theme') || 'dark'); } catch { applyTheme('dark'); }
+})();
+ 
 /* ─── Start ─── */
 init();
-
+ 
 /* ─── PWA Service Worker ─── */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -1091,7 +1377,7 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('SW failed:', err));
   });
 }
-
+ 
 /* ─── PWA Install Prompt ─── */
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
