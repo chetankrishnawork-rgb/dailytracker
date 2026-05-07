@@ -235,7 +235,7 @@ body::after {
 .card-stats { display:grid; grid-template-columns:repeat(3,1fr); }
 .cstat {
   display:flex; flex-direction:column; align-items:center;
-  padding:15px 6px 13px; position:relative; cursor:default;
+  padding:16px 8px 14px; position:relative; cursor:default;
   transition:background .2s; border-radius:10px;
 }
 .cstat:hover { background:rgba(255,255,255,.02); }
@@ -300,6 +300,7 @@ body::after {
 .tab-bar {
   display:flex; gap:6px; margin-bottom:18px;
   overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:3px;
+  flex-wrap:wrap;
 }
 .tab-bar::-webkit-scrollbar { display:none; }
 .tab-btn {
@@ -315,7 +316,7 @@ body::after {
 }
 
 /* ═══ SECTION HEADING ═══ */
-.sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; margin-top:20px; }
+.sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; margin-top:24px; }
 .sec-title {
   font-family:var(--fd); font-size:13px; font-weight:800;
   letter-spacing:2px; text-transform:uppercase; color:var(--txt3);
@@ -334,6 +335,7 @@ body::after {
 .filter-row {
   display:flex; gap:6px; margin-bottom:14px;
   overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:3px;
+  flex-wrap:wrap;
 }
 .filter-row::-webkit-scrollbar { display:none; }
 .filter-chip {
@@ -463,7 +465,7 @@ body::after {
 .tyre-grid-btn.hard   .tgb-ring { border-color:var(--hard);   background:rgba(216,216,216,.07); }
 .tyre-grid-btn.inter  .tgb-ring { border-color:var(--inter);  background:rgba(57,217,138,.1); }
 .tgb-info { flex:1; text-align:left; }
-.tgb-name { font-family:var(--fd); font-size:13px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; display:block; }
+.tgb-name { font-family:var(--fd); font-size:13px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tyre-grid-btn.soft   .tgb-name { color:var(--soft); }
 .tyre-grid-btn.medium .tgb-name { color:var(--medium); }
 .tyre-grid-btn.hard   .tgb-name { color:var(--hard); }
@@ -704,11 +706,20 @@ body::after {
 /* ═══ RESPONSIVE ═══ */
 @media (min-width:600px) {
   #app { padding-left:calc(24px + var(--safe-left)); padding-right:calc(24px + var(--safe-right)); }
-  .tyre-grid { grid-template-columns:repeat(4,1fr); }
   .modal-sheet { border-radius:22px; }
   .modal-overlay { align-items:center; padding-bottom:0; }
 }
 @media (min-width:900px) { .bottom-nav { display:none; } #app { padding-bottom:40px; } }
+@media (min-width:900px) {
+  body { display:flex; justify-content:center; }
+  #app {
+    border-left:  1px solid rgba(255,255,255,0.04);
+    border-right: 1px solid rgba(255,255,255,0.04);
+    min-height: 100vh;
+  }
+  .driver-card { margin-left:0; margin-right:0; }
+}
+
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:0ms!important; animation-duration:0ms!important; } }
 @keyframes fadein { from{opacity:0} to{opacity:1} }
 
