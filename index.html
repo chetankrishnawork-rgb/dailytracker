@@ -1006,33 +1006,10 @@ onAuthStateChanged(auth, async user => {
 
 /* ─── Migrate old root-level data to /users/{uid}/ ─── */
 async function migrateOldData() {
-  try {
-    // Check if user already has data at new path
-    const hasNew = await get(ref(db, 'users/' + uid + '/name'));
-    if (hasNew.exists()) return; // already migrated
-
-    // Check for old root-level data
-    const oldSnap = await get(ref(db, '/'));
-    if (!oldSnap.exists()) return;
-    const old = oldSnap.val();
-
-    // Only migrate if it looks like the old schema (has name/xp at root)
-    if (!old.name && !old.xp && !old.tasks) return;
-
-    console.log('Migrating old data to new user path...');
-    const newData = {};
-    if (old.name)     newData.name     = old.name;
-    if (old.xp)       newData.xp       = old.xp;
-    if (old.streak)   newData.streak   = old.streak;
-    if (old.lastDate) newData.lastDate  = old.lastDate;
-    if (old.tasks)    newData.tasks    = old.tasks;
-
-    await set(ref(db, 'users/' + uid), newData);
-    console.log('Migration complete.');
-
-    // Clean up old root data (optional — safe to leave)
-    // await remove(ref(db, '/name')); etc.
-  } catch(e) { console.error('migration error', e); }
+  // Migration from old root-level schema is no longer needed —
+  // new Firebase rules block root reads anyway, and all users
+  // have already been migrated or are new. Safe to skip.
+  return;
 }
 
 /* ─── App State ─── */
@@ -1215,6 +1192,10 @@ async function addMultiTask() {
     }
     cur.setDate(cur.getDate()+1); count++;
   }
+  if (pushes.length === 0) {
+    showToast('⚠ No days match your selection!');
+    return;
+  }
   const ids = await Promise.all(pushes.map(task => fbPush('/tasks', task)));
   ids.forEach((id, i) => { if (id) state.tasks.push({id, ...pushes[i]}); });
   document.getElementById('multiTaskName').value='';
@@ -1229,8 +1210,16 @@ async function toggleTask(e, id) {
   t.completedDate = t.done ? toDateStr(new Date()) : null;
   const earned = CAT_XP[t.category] || 10;
   const oldXp = state.xp;
-  if (t.done) { state.xp += earned; updateStreak(); }
-  else        { state.xp = Math.max(0, state.xp - earned); }
+  if (t.done) {
+    state.xp += earned;
+    updateStreak();
+  } else {
+    state.xp = Math.max(0, state.xp - earned);
+    // Recalculate streak in case unchecking removes the only completion on a given day
+    const { streak, lastDate } = recalculateStreak(state.tasks);
+    state.streak  = streak;
+    state.lastDate = lastDate;
+  }
   await fbPatch('/', {
     ['tasks/'+id]: {name:t.name,category:t.category,due:t.due,done:t.done,created:t.created,completedDate:t.completedDate||null},
     xp: state.xp, streak: state.streak, lastDate: state.lastDate
@@ -1429,7 +1418,7 @@ function renderLevels() {
       <div class="level-badge">${LEVEL_ICONS[i]||'⭐'}</div>
       <div>
         <div class="level-name">Level ${i+1} — ${l.name}</div>
-        <div class="level-xp">${l.xp} XP ${i===curLv?'← You are here 🏍️':i<curLv?'✓ Achieved':''}</div>
+        <div class="level-xp">${l.xp} XP ${i===curLv?'← You are here':i<curLv?'✓ Achieved':''}</div>
         ${i===curLv ? `<div class="xp-bar-track" style="margin-top:6px"><div class="xp-bar-fill" style="width:${Math.min(100,Math.round((state.xp-l.xp)/Math.max(1,(LEVELS[i+1]||{xp:state.xp+1}).xp-l.xp)*100))}%"></div></div>` : ''}
       </div>
     </div>`).join('');
@@ -1523,7 +1512,7 @@ function showLevelUp() {
 /* ─── Set today's date as default ─── */
 document.getElementById('taskDue').value = toDateStr(new Date());
 document.getElementById('multiFrom').value = toDateStr(new Date());
-const _tomorrow = new Date(); _tomorrow.setDate(_tomorrow.getDate()+7);
+const _tomorrow = new Date(); _tomorrow.setDate(_tomorrow.getDate()+30);
 document.getElementById('multiTo').value = toDateStr(_tomorrow);
 
 /* ─── Theme Toggle ─── */
