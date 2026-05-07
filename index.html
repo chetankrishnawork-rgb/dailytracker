@@ -57,16 +57,104 @@
 
 /* Light mode */
 body.light-mode {
-  --bg:   #f0f0f0; --s1: #ffffff; --s2: #f5f5f5; --s3: #ebebeb; --s4: #e0e0e0;
-  --txt:  #111111; --txt2: #555555; --txt3: #999999;
+  --bg:   #e8e8e8;
+  --s1:   #f5f5f5;
+  --s2:   #e0e0e0;
+  --s3:   #d4d4d4;
+  --s4:   #c8c8c8;
+  --red:      #BB0000;
+  --red2:     #dd1a00;
+  --red-dim:  #880000;
+  --gold:     #9a7008;
+  --gold-hi:  #c9900a;
+  --txt:  #0a0a0a;
+  --txt2: #2a2a2a;
+  --txt3: #555555;
+  --soft:   #BB0000;
+  --medium: #c9900a;
+  --hard:   #444444;
+  --inter:  #1a9960;
 }
-body.light-mode::before { opacity:.025; }
-body.light-mode::after  { opacity:.3; }
-body.light-mode .bottom-nav { background:rgba(240,240,240,.93); border-top-color:rgba(0,0,0,.1); }
+body.light-mode::before { opacity:.015; }
+body.light-mode::after  { opacity:.12; }
+body.light-mode .bottom-nav {
+  background:rgba(220,220,220,.95);
+  border-top-color:rgba(0,0,0,.15);
+}
+body.light-mode .top-stripe {
+  box-shadow:0 0 14px rgba(187,0,0,.5),0 0 30px rgba(187,0,0,.2);
+}
+body.light-mode .driver-card {
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.1),
+    0 1px 0 rgba(255,255,255,0.6),
+    0 12px 32px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+}
+body.light-mode .mission-card {
+  box-shadow: 0 1px 4px rgba(0,0,0,.1), inset 0 1px 0 rgba(255,255,255,.8);
+  border-color: rgba(0,0,0,0.1);
+}
+body.light-mode .add-card {
+  border-color: rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+body.light-mode .tab-btn {
+  border-color: rgba(0,0,0,0.12);
+  background: var(--s1);
+}
+body.light-mode .tab-btn.active {
+  background: rgba(187,0,0,.1);
+  border-color: rgba(187,0,0,.5);
+}
+body.light-mode .filter-chip { border-color:rgba(0,0,0,.12); background:var(--s1); }
+body.light-mode .filter-chip.active { background:rgba(187,0,0,.1); border-color:rgba(187,0,0,.5); }
+body.light-mode .tyre-grid-btn { border-color:rgba(0,0,0,.12); background:var(--s2); }
+body.light-mode .wd-btn { border-color:rgba(0,0,0,.12); background:var(--s2); }
+body.light-mode .wd-btn.active { background:rgba(187,0,0,.1); border-color:rgba(187,0,0,.45); }
+body.light-mode .groupby-btn { border-color:rgba(0,0,0,.12); background:var(--s2); }
+body.light-mode .groupby-btn.active { background:rgba(187,0,0,.1); border-color:rgba(187,0,0,.45); }
+body.light-mode .hdr-btn { border-color:rgba(0,0,0,.15); background:var(--s1); }
+body.light-mode .modal-sheet { background:var(--s1); box-shadow:0 -4px 40px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.9); }
+body.light-mode .modal-btn { background:var(--s2); border-color:rgba(0,0,0,.12); }
+body.light-mode .level-item { border-color:rgba(0,0,0,.08); background:var(--s1); box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+body.light-mode .level-badge { background:var(--s2); }
+body.light-mode .level-item.current { border-color:rgba(187,0,0,.4); background:rgba(187,0,0,.05); }
+body.light-mode .sec-badge { background:var(--s2); border-color:rgba(0,0,0,.1); }
+body.light-mode .card-line { background:linear-gradient(90deg,transparent,rgba(0,0,0,.1) 30%,rgba(0,0,0,.15) 50%,rgba(0,0,0,.1) 70%,transparent); }
+body.light-mode .ghost-num { -webkit-text-stroke:1px rgba(187,0,0,0.12); }
+body.light-mode .driver-card::before { background:radial-gradient(ellipse,rgba(187,0,0,.08) 0%,transparent 70%); }
+body.light-mode .cstat:hover { background:rgba(0,0,0,.04); }
+body.light-mode .tyre-sm.soft   { background:rgba(187,0,0,.08); }
+body.light-mode .tyre-sm.medium { background:rgba(201,144,10,.08); }
+body.light-mode .tyre-sm.hard   { background:rgba(68,68,68,.08); }
+body.light-mode .tyre-sm.inter  { background:rgba(26,153,96,.08); }
+body.light-mode .standings-overlay { background:rgba(232,232,232,.97); }
+body.light-mode .st-table { border-color:rgba(0,0,0,.1); }
+body.light-mode .st-row { border-bottom-color:rgba(0,0,0,.07); }
+body.light-mode .st-row.you { background:rgba(187,0,0,.07); }
+body.light-mode .st-close { border-color:rgba(0,0,0,.12); }
+body.light-mode .toast { background:var(--s1); box-shadow:0 4px 20px rgba(0,0,0,.2); }
 body.light-mode .form-input,
 body.light-mode .form-select,
-body.light-mode .signin-input { background:var(--s3); color:var(--txt); color-scheme:light; }
+body.light-mode .signin-input { background:var(--s1); color:var(--txt); color-scheme:light; border-color:rgba(0,0,0,.15); }
 body.light-mode input[type="date"] { color-scheme:light; }
+body.light-mode .cal-day:hover { background:rgba(0,0,0,.07); }
+body.light-mode .cal-day.today { background:rgba(187,0,0,.12); }
+body.light-mode .cal-arrow { border-color:rgba(0,0,0,.12); background:var(--s1); }
+body.light-mode .tyre-tooltip { background:var(--s1); border-color:rgba(0,0,0,.15); box-shadow:0 4px 20px rgba(0,0,0,.15); }
+body.light-mode .tyre-tooltip::after { border-top-color:var(--s1); }
+body.light-mode .cstat:nth-child(1) .cstat-val { text-shadow:none; color:#BB0000; }
+body.light-mode .cstat:nth-child(2) .cstat-val { text-shadow:none; color:#9a7008; }
+body.light-mode .cstat:nth-child(3) .cstat-val { text-shadow:none; color:#444444; }
+body.light-mode .mission-card { border-color:rgba(0,0,0,0.12); }
+body.light-mode .mission-card.overdue-card { border-color:rgba(187,0,0,.4); background:rgba(187,0,0,.04); }
+body.light-mode .drs-light.open { box-shadow:0 0 6px #1a9960; }
+body.light-mode .dp-fill { box-shadow:0 0 6px rgba(26,153,96,.3); }
+body.light-mode .rank-chip { background:rgba(187,0,0,.08); border-color:rgba(187,0,0,.3); }
+body.light-mode .rank-dot { box-shadow:0 0 4px #BB0000; }
+body.light-mode .sec-title::before { background:#BB0000; box-shadow:0 0 5px rgba(187,0,0,.5); }
+body.light-mode .top-stripe { background:linear-gradient(90deg,#880000,#BB0000,#dd1a00,#BB0000,#880000); }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 html { height:100%; }
@@ -917,26 +1005,35 @@ body::after {
             <filter id="gf"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
             <filter id="nf"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
           </defs>
-          <circle cx="143" cy="153" r="130" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
-          <path d="M14,153 A129,129 0 0,1 272,153" fill="none" stroke="#181818" stroke-width="16" stroke-linecap="round"/>
-          <path d="M14,153  A129,129 0 0,1 77,33"   fill="none" stroke="rgba(57,217,138,0.1)"  stroke-width="16" stroke-linecap="butt"/>
-          <path d="M77,33   A129,129 0 0,1 209,33"   fill="none" stroke="rgba(200,151,10,0.1)"  stroke-width="16" stroke-linecap="butt"/>
-          <path d="M209,33  A129,129 0 0,1 272,153"  fill="none" stroke="rgba(220,0,0,0.18)"    stroke-width="16" stroke-linecap="butt"/>
-          <g stroke="#DC0000" stroke-width="2" opacity=".9" stroke-linecap="round">
+          <!-- Bezel ring -->
+          <circle cx="143" cy="153" r="130" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" id="tachoBezel"/>
+          <!-- Track background — visible in both modes -->
+          <path id="tachoTrack" d="M14,153 A129,129 0 0,1 272,153" fill="none" stroke="#2e2e2e" stroke-width="18" stroke-linecap="round"/>
+          <!-- Zone arcs — clearly visible tints -->
+          <path d="M14,153  A129,129 0 0,1 77,33"   fill="none" stroke="rgba(57,217,138,0.28)"  stroke-width="18" stroke-linecap="butt"/>
+          <path d="M77,33   A129,129 0 0,1 209,33"   fill="none" stroke="rgba(200,151,10,0.28)"  stroke-width="18" stroke-linecap="butt"/>
+          <path d="M209,33  A129,129 0 0,1 272,153"  fill="none" stroke="rgba(220,0,0,0.38)"     stroke-width="18" stroke-linecap="butt"/>
+          <!-- Redline ticks -->
+          <g id="tachoRedTicks" stroke="#DC0000" stroke-width="2.5" opacity="1" stroke-linecap="round">
             <line x1="230" y1="45" x2="221" y2="57"/><line x1="250" y1="76" x2="240" y2="85"/><line x1="263" y1="116" x2="252" y2="120"/>
           </g>
-          <path id="tachoFill" d="M14,153 A129,129 0 0,1 14,153" fill="none" stroke="url(#tg)" stroke-width="16" stroke-linecap="round" filter="url(#gf)"/>
-          <text id="tachoVal" x="143" y="134" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="44" font-weight="900" font-style="italic" fill="#FFD046" filter="url(#gf)">0</text>
-          <text x="143" y="150" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="8" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.2)">RACE POINTS</text>
+          <!-- Active fill arc -->
+          <path id="tachoFill" d="M14,153 A129,129 0 0,1 14,153" fill="none" stroke="url(#tg)" stroke-width="18" stroke-linecap="round" filter="url(#gf)"/>
+          <!-- RP value -->
+          <text id="tachoVal" x="143" y="134" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="46" font-weight="900" font-style="italic" fill="#FFD046" filter="url(#gf)">0</text>
+          <!-- RACE POINTS label -->
+          <text id="tachoLabel" x="143" y="150" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="9" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.55)">RACE POINTS</text>
+          <!-- Needle — thicker, more visible -->
           <g id="tachoNeedle" style="transform-origin:143px 153px;transform:rotate(-90deg);transition:transform 1.2s cubic-bezier(0.34,1.56,0.64,1)">
-            <line x1="143" y1="153" x2="24" y2="153" stroke="white" stroke-width="2" stroke-linecap="round" filter="url(#nf)"/>
-            <circle cx="24" cy="153" r="2" fill="white" opacity=".8"/>
+            <line x1="143" y1="153" x2="20" y2="153" stroke="white" stroke-width="3" stroke-linecap="round" filter="url(#nf)" id="tachoNeedleLine"/>
+            <circle cx="20" cy="153" r="3" fill="white" opacity=".9" id="tachoNeedleTip"/>
           </g>
-          <circle cx="143" cy="153" r="12" fill="#111" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
-          <circle cx="143" cy="153" r="9"  fill="none" stroke="rgba(200,205,214,0.2)" stroke-width="1.5"/>
-          <circle cx="143" cy="153" r="5.5" fill="#161616"/>
-          <circle cx="143" cy="153" r="3"  fill="#DC0000" filter="url(#gf)"/>
-          <ellipse cx="140.5" cy="150.5" rx="2" ry="1.2" fill="rgba(255,255,255,0.3)" transform="rotate(-30,140.5,150.5)"/>
+          <!-- Hub rings -->
+          <circle cx="143" cy="153" r="13" fill="#1a1a1a" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" id="tachoHub1"/>
+          <circle cx="143" cy="153" r="9"  fill="none" stroke="rgba(200,205,214,0.35)" stroke-width="2" id="tachoHub2"/>
+          <circle cx="143" cy="153" r="5.5" fill="#222222" id="tachoHub3"/>
+          <circle cx="143" cy="153" r="3.5" fill="#DC0000" filter="url(#gf)" id="tachoHubRed"/>
+          <ellipse cx="140.5" cy="150.5" rx="2.5" ry="1.5" fill="rgba(255,255,255,0.4)" transform="rotate(-30,140.5,150.5)"/>
         </svg></div>
     </div>
 
@@ -1760,11 +1857,49 @@ function applyTheme(theme){
   document.body.classList.toggle('light-mode',isLight);
   const btn=document.getElementById('themeToggleBtn');
   if(btn){ btn.textContent=isLight?'☀️':'🌙'; }
-  document.getElementById('themeColorMeta').setAttribute('content',isLight?'#f0f0f0':'#080808');
+  document.getElementById('themeColorMeta').setAttribute('content',isLight?'#e8e8e8':'#080808');
   try{ localStorage.setItem('mc_theme',theme); }catch{}
+  updateTachoTheme(isLight);
+}
+
+function updateTachoTheme(isLight){
+  const track  = document.getElementById('tachoTrack');
+  const bezel  = document.getElementById('tachoBezel');
+  const label  = document.getElementById('tachoLabel');
+  const hub1   = document.getElementById('tachoHub1');
+  const hub2   = document.getElementById('tachoHub2');
+  const hub3   = document.getElementById('tachoHub3');
+  const needle = document.getElementById('tachoNeedleLine');
+  const tip    = document.getElementById('tachoNeedleTip');
+  const redTicks = document.getElementById('tachoRedTicks');
+  if(!track) return;
+  if(isLight){
+    track.setAttribute('stroke','#c8c8c8');
+    bezel.setAttribute('stroke','rgba(0,0,0,0.15)');
+    label.setAttribute('fill','rgba(0,0,0,0.45)');
+    hub1.setAttribute('fill','#d4d4d4'); hub1.setAttribute('stroke','rgba(0,0,0,0.15)');
+    hub2.setAttribute('stroke','rgba(0,0,0,0.2)');
+    hub3.setAttribute('fill','#e0e0e0');
+    needle.setAttribute('stroke','#1a1a1a');
+    tip.setAttribute('fill','#1a1a1a');
+    redTicks.setAttribute('stroke','#BB0000');
+  } else {
+    track.setAttribute('stroke','#2e2e2e');
+    bezel.setAttribute('stroke','rgba(255,255,255,0.08)');
+    label.setAttribute('fill','rgba(255,255,255,0.55)');
+    hub1.setAttribute('fill','#1a1a1a'); hub1.setAttribute('stroke','rgba(255,255,255,0.12)');
+    hub2.setAttribute('stroke','rgba(200,205,214,0.35)');
+    hub3.setAttribute('fill','#222222');
+    needle.setAttribute('stroke','white');
+    tip.setAttribute('fill','white');
+    redTicks.setAttribute('stroke','#DC0000');
+  }
 }
 function toggleTheme(){ applyTheme(document.body.classList.contains('light-mode')?'dark':'light'); }
-(function(){ try{ applyTheme(localStorage.getItem('mc_theme')||'dark'); }catch{ applyTheme('dark'); } })();
+(function(){
+  const saved = (() => { try{ return localStorage.getItem('mc_theme'); }catch{ return null; } })();
+  applyTheme(saved || 'dark');
+})();
 
 /* ─── Expose to global (ES module scope) ─── */
 window._openTask       = openTask;
