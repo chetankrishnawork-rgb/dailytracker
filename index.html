@@ -1249,12 +1249,62 @@ function updateStreak() {
   state.lastDate  = today;
 }
 
+/* Recalculate streak from scratch based on remaining completed tasks.
+   Walks backwards from today counting consecutive days with at least one completion. */
+function recalculateStreak(tasks) {
+  const doneDates = new Set(
+    tasks.filter(t => t.done && t.completedDate).map(t => t.completedDate)
+  );
+  if (doneDates.size === 0) return { streak: 0, lastDate: null };
+
+  let streak = 0;
+  let cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+
+  // Start from today; if today has no completion, start from yesterday
+  // (streak shouldn't reset just because today isn't done yet)
+  const todayStr = toDateStr(cursor);
+  if (!doneDates.has(todayStr)) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  while (true) {
+    const ds = toDateStr(cursor);
+    if (!doneDates.has(ds)) break;
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  // lastDate is the most recent completion date
+  const lastDate = [...doneDates].sort().pop();
+  return { streak, lastDate };
+}
+
 async function deleteCurrentTask() {
   const id = state.currentTaskId;
   if (!id) return;
+  const task = state.tasks.find(t => t.id === id);
+
+  // Deduct XP if task was completed
+  if (task && task.done) {
+    const earned = CAT_XP[task.category] || 10;
+    state.xp = Math.max(0, state.xp - earned);
+  }
+
   await fbDelete('/tasks/'+id);
-  state.tasks = state.tasks.filter(t=>t.id!==id);
-  closeTaskModal(); renderAll(); showToast('🗑 Mission deleted');
+  state.tasks = state.tasks.filter(t => t.id !== id);
+
+  // Recalculate streak from remaining completed tasks
+  const { streak, lastDate } = recalculateStreak(state.tasks);
+  state.streak  = streak;
+  state.lastDate = lastDate;
+
+  // Persist XP, streak and lastDate
+  await fbPatch('/', { xp: state.xp, streak: state.streak, lastDate: state.lastDate });
+
+  closeTaskModal();
+  renderAll();
+  showToast('🗑 Mission deleted');
 }
 
 /* ─── Task Detail Modal ─── */
