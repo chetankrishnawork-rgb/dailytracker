@@ -250,14 +250,14 @@ body::after {
 .cstat:nth-child(1) .cstat-val { color:var(--red);     text-shadow:0 0 16px rgba(220,0,0,.4); }
 .cstat:nth-child(2) .cstat-val { color:var(--gold-hi); text-shadow:0 0 16px rgba(255,208,70,.3); }
 .cstat:nth-child(3) .cstat-val { color:var(--chrome);  text-shadow:0 0 14px rgba(154,165,180,.25); }
-.cstat-unit { font-family:var(--fd); font-size:8px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--txt3); }
-.cstat-lbl  { font-family:var(--fd); font-size:9px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--txt2); }
+.cstat-unit { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--txt3); }
+.cstat-lbl  { font-family:var(--fd); font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:var(--txt2); }
 
 /* Daily progress */
 .card-progress { padding:12px 22px 16px; }
 .dp-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px; }
-.dp-label { font-family:var(--fd); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--txt3); }
-.dp-count { font-family:var(--fm); font-size:11px; color:var(--green); }
+.dp-label { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--txt3); }
+.dp-count { font-family:var(--fm); font-size:13px; color:var(--green); }
 .dp-track { height:5px; background:var(--s3); border-radius:2px; overflow:hidden; }
 .dp-fill  {
   height:100%; border-radius:2px;
@@ -277,12 +277,12 @@ body::after {
 .drs-light.open   { background:var(--green); box-shadow:0 0 8px var(--green); animation:drs-blink .9s ease-in-out infinite; }
 .drs-light.closed { background:var(--txt3); }
 @keyframes drs-blink { 0%,100%{opacity:.65} 50%{opacity:1} }
-.drs-copy { font-family:var(--fm); font-size:10px; }
-.drs-label  { color:var(--txt3); }
+.drs-copy { font-family:var(--fm); font-size:12px; }
+.drs-label  { color:var(--txt3); font-size:12px; }
 .drs-status { transition:color .3s; }
 .drs-status.open   { color:var(--green); }
 .drs-status.closed { color:var(--txt3); }
-.drs-note   { display:block; font-size:8.5px; color:var(--txt3); margin-top:1px; }
+.drs-note   { display:block; font-size:11px; color:var(--txt3); margin-top:2px; }
 .tyre-chips-sm { display:flex; gap:7px; }
 .tyre-sm {
   width:22px; height:22px; border-radius:50%; border:2.5px solid;
@@ -305,7 +305,7 @@ body::after {
 .tab-btn {
   flex-shrink:0; height:36px; padding:0 14px; border-radius:99px;
   border:1px solid rgba(255,255,255,.07); background:var(--s2); color:var(--txt2);
-  cursor:pointer; font-family:var(--fd); font-size:12px; font-weight:700;
+  cursor:pointer; font-family:var(--fd); font-size:13px; font-weight:700;
   letter-spacing:.5px; text-transform:uppercase; white-space:nowrap;
   transition:all .18s; -webkit-tap-highlight-color:transparent;
 }
@@ -317,8 +317,8 @@ body::after {
 /* ═══ SECTION HEADING ═══ */
 .sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; margin-top:20px; }
 .sec-title {
-  font-family:var(--fd); font-size:11px; font-weight:800;
-  letter-spacing:3px; text-transform:uppercase; color:var(--txt3);
+  font-family:var(--fd); font-size:13px; font-weight:800;
+  letter-spacing:2px; text-transform:uppercase; color:var(--txt3);
   display:flex; align-items:center; gap:7px;
 }
 .sec-title::before {
@@ -326,7 +326,7 @@ body::after {
   background:var(--red); border-radius:1px; box-shadow:0 0 7px rgba(220,0,0,.7);
 }
 .sec-badge {
-  font-family:var(--fm); font-size:10px; color:var(--txt3);
+  font-family:var(--fm); font-size:12px; color:var(--txt3);
   background:var(--s2); padding:2px 8px; border-radius:4px; border:1px solid rgba(255,255,255,.05);
 }
 
@@ -362,7 +362,7 @@ body::after {
 }
 .mission-card::after {
   content:attr(data-pos); position:absolute; top:8px; right:10px;
-  font-family:var(--fm); font-size:9px; color:var(--txt3);
+  font-family:var(--fm); font-size:11px; color:var(--txt3);
 }
 .mission-card.fastest::after { color:var(--purple); }
 .mission-card.overdue-card  { border-color:rgba(220,0,0,.35); background:rgba(220,0,0,.03); }
@@ -390,16 +390,16 @@ body::after {
 .mission-body { flex:1; min-width:0; padding-right:20px; }
 .mission-title { font-size:14px; font-weight:600; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mission-meta  { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
-.tyre-badge { display:flex; align-items:center; gap:4px; font-family:var(--fd); font-size:10px; font-weight:700; text-transform:uppercase; }
+.tyre-badge { display:flex; align-items:center; gap:5px; font-family:var(--fd); font-size:12px; font-weight:700; text-transform:uppercase; }
 .tyre-badge .tb-dot { width:12px; height:12px; border-radius:50%; border:2px solid; flex-shrink:0; }
 .tyre-badge.soft   { color:var(--soft); }   .tyre-badge.soft   .tb-dot { border-color:var(--soft);   background:rgba(220,0,0,.12); }
 .tyre-badge.medium { color:var(--medium); } .tyre-badge.medium .tb-dot { border-color:var(--medium); background:rgba(255,215,0,.12); }
 .tyre-badge.hard   { color:var(--hard); }   .tyre-badge.hard   .tb-dot { border-color:var(--hard);   background:rgba(216,216,216,.08); }
 .tyre-badge.inter  { color:var(--inter); }  .tyre-badge.inter  .tb-dot { border-color:var(--inter);  background:rgba(57,217,138,.12); }
-.mission-due { font-family:var(--fm); font-size:9px; color:var(--txt3); }
+.mission-due { font-family:var(--fm); font-size:11px; color:var(--txt3); }
 .mission-due.overdue { color:var(--red); }
 .mission-xp {
-  margin-left:auto; flex-shrink:0; font-family:var(--fm); font-size:10px; color:var(--gold-hi);
+  margin-left:auto; flex-shrink:0; font-family:var(--fm); font-size:12px; color:var(--gold-hi);
   background:rgba(255,208,70,.07); border:1px solid rgba(255,208,70,.18); padding:2px 6px; border-radius:3px;
 }
 @keyframes flag-sweep {
@@ -422,7 +422,7 @@ body::after {
 .add-card {
   background:var(--s1); border:1px solid rgba(255,255,255,.06); border-radius:18px;
   padding:18px; margin-bottom:22px; box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
-  transition:border-color .2s;
+  transition:border-color .2s; overflow:visible;
 }
 .add-card:focus-within { border-color:rgba(220,0,0,.35); }
 .form-tabs { display:flex; gap:6px; margin-bottom:16px; }
@@ -434,7 +434,7 @@ body::after {
 }
 .form-tab.active { background:rgba(220,0,0,.12); border-color:rgba(220,0,0,.45); color:var(--txt); }
 .form-group { margin-bottom:14px; }
-.form-label { font-family:var(--fd); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--txt3); margin-bottom:6px; display:block; }
+.form-label { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--txt3); margin-bottom:8px; display:block; }
 .form-input,.form-select {
   width:100%; min-height:var(--touch-min); background:var(--s2);
   border:1px solid rgba(255,255,255,.08); border-radius:10px;
@@ -446,7 +446,7 @@ body::after {
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23606060' fill='none' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat; background-position:calc(100% - 12px) 50%; padding-right:36px;
 }
-.tyre-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px; }
+.tyre-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px; overflow:visible; }
 .tyre-grid-btn {
   height:58px; border-radius:10px; border:1px solid rgba(255,255,255,.07);
   background:var(--s2); cursor:pointer; transition:all .18s;
@@ -468,9 +468,9 @@ body::after {
 .tyre-grid-btn.medium .tgb-name { color:var(--medium); }
 .tyre-grid-btn.hard   .tgb-name { color:var(--hard); }
 .tyre-grid-btn.inter  .tgb-name { color:var(--inter); }
-.tgb-cat { font-size:10px; color:var(--txt3); font-weight:500; }
+.tgb-cat { font-size:12px; color:var(--txt2); font-weight:500; }
 .tgb-rp {
-  font-family:var(--fm); font-size:10px; color:var(--gold-hi);
+  font-family:var(--fm); font-size:12px; color:var(--gold-hi);
   background:rgba(255,208,70,.07); border:1px solid rgba(255,208,70,.18);
   padding:2px 5px; border-radius:3px; flex-shrink:0;
 }
@@ -508,12 +508,12 @@ body::after {
 .cal-month-title { font-family:var(--fd); font-size:17px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
 .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:14px; }
 .cal-dn {
-  text-align:center; font-family:var(--fd); font-size:9px; font-weight:700;
-  letter-spacing:1.5px; text-transform:uppercase; color:var(--txt3); padding:4px 0;
+  text-align:center; font-family:var(--fd); font-size:11px; font-weight:700;
+  letter-spacing:.5px; text-transform:uppercase; color:var(--txt3); padding:4px 0;
 }
 .cal-day {
   aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-  font-family:var(--fd); font-size:13px; font-weight:700; border-radius:8px;
+  font-family:var(--fd); font-size:15px; font-weight:700; border-radius:8px;
   cursor:pointer; position:relative; transition:background .15s; color:var(--txt2);
   -webkit-tap-highlight-color:transparent;
 }
@@ -526,16 +526,16 @@ body::after {
 }
 .cal-day.other-month { opacity:.2; }
 .groupby-bar { display:flex; align-items:center; gap:7px; margin-bottom:12px; flex-wrap:wrap; }
-.groupby-label { font-family:var(--fd); font-size:10px; color:var(--txt3); font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+.groupby-label { font-family:var(--fd); font-size:12px; color:var(--txt3); font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
 .groupby-btn {
-  height:30px; padding:0 10px; border-radius:4px; border:1px solid rgba(255,255,255,.07);
-  background:var(--s2); color:var(--txt3); font-family:var(--fd); font-size:11px;
+  height:34px; padding:0 12px; border-radius:4px; border:1px solid rgba(255,255,255,.07);
+  background:var(--s2); color:var(--txt3); font-family:var(--fd); font-size:13px;
   font-weight:700; letter-spacing:.5px; text-transform:uppercase; cursor:pointer;
   transition:all .18s; -webkit-tap-highlight-color:transparent;
 }
 .groupby-btn.active { background:rgba(220,0,0,.12); border-color:rgba(220,0,0,.45); color:var(--red); }
 .group-date-header {
-  font-family:var(--fd); font-size:11px; font-weight:800; letter-spacing:2px;
+  font-family:var(--fd); font-size:13px; font-weight:800; letter-spacing:1px;
   text-transform:uppercase; color:var(--txt3);
   padding:10px 0 5px; border-bottom:1px solid rgba(255,255,255,.05); margin-bottom:8px;
 }
@@ -554,8 +554,8 @@ body::after {
   display:flex; align-items:center; justify-content:center; font-size:18px; background:var(--s3);
 }
 .level-item.current .level-badge { background:rgba(220,0,0,.15); }
-.level-name { font-family:var(--fd); font-size:14px; font-weight:800; letter-spacing:.3px; text-transform:uppercase; }
-.level-xp   { font-family:var(--fm); font-size:10px; color:var(--txt3); margin-top:2px; }
+.level-name { font-family:var(--fd); font-size:16px; font-weight:800; letter-spacing:.3px; text-transform:uppercase; }
+.level-xp   { font-family:var(--fm); font-size:12px; color:var(--txt3); margin-top:3px; }
 .level-item.current .level-xp { color:var(--red); }
 .level-achieved { font-family:var(--fd); font-size:10px; color:var(--green); font-weight:700; margin-left:auto; }
 .level-progress { margin-top:6px; }
@@ -587,8 +587,8 @@ body::after {
   padding:11px 0; border-bottom:1px solid rgba(255,255,255,.05);
 }
 .modal-detail-row:last-of-type { border-bottom:none; }
-.modal-dl { font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--txt3); }
-.modal-dv { font-family:var(--fm); font-size:12px; color:var(--txt2); }
+.modal-dl { font-family:var(--fd); font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--txt3); }
+.modal-dv { font-family:var(--fm); font-size:14px; color:var(--txt2); }
 .modal-btns { display:flex; gap:10px; margin-top:20px; }
 .modal-btn {
   flex:1; height:48px; border-radius:10px; border:1px solid rgba(255,255,255,.07);
@@ -655,7 +655,7 @@ body::after {
   transform:translateX(-50%) translateY(14px);
   background:var(--s2); border:1px solid rgba(220,0,0,.4); color:var(--txt);
   padding:9px 16px; border-radius:6px;
-  font-family:var(--fd); font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+  font-family:var(--fd); font-size:14px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
   z-index:400; opacity:0; pointer-events:none; transition:all .28s; white-space:nowrap;
   box-shadow:0 6px 24px rgba(0,0,0,.6);
 }
@@ -695,7 +695,7 @@ body::after {
 }
 .nav-item.active { color:var(--red); }
 .nav-item svg  { width:20px; height:20px; }
-.nav-item span { font-family:var(--fd); font-size:8px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; }
+.nav-item span { font-family:var(--fd); font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
 
 /* ═══ SECTION PANELS ═══ */
 .section-panel { display:none; }
@@ -711,6 +711,42 @@ body::after {
 @media (min-width:900px) { .bottom-nav { display:none; } #app { padding-bottom:40px; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:0ms!important; animation-duration:0ms!important; } }
 @keyframes fadein { from{opacity:0} to{opacity:1} }
+
+/* ═══ COMPOUND TOOLTIP ═══ */
+.tyre-grid-btn { position: relative; }
+.tyre-tooltip {
+  position: absolute; bottom: calc(100% + 10px); left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: var(--s4); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px; padding: 10px 14px;
+  font-family: var(--fb); font-size: 13px; font-weight: 400;
+  color: var(--txt); white-space: nowrap;
+  pointer-events: none; opacity: 0;
+  transition: opacity .2s, transform .2s;
+  z-index: 50;
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+}
+.tyre-tooltip::after {
+  content: '';
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--s4);
+}
+.tyre-grid-btn:hover .tyre-tooltip {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.tyre-tooltip .tt-title {
+  font-family: var(--fd); font-size: 14px; font-weight: 800;
+  letter-spacing: .5px; text-transform: uppercase; margin-bottom: 5px;
+  display: block;
+}
+.tyre-tooltip .tt-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--txt2); margin-top: 3px;
+}
+.tyre-tooltip .tt-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
 </style>
 </head>
 <body>
@@ -962,21 +998,45 @@ body::after {
           <label class="form-label">Compound (Category)</label>
                     <div class="tyre-grid" id="tyre-grid-single">
             <button class="tyre-grid-btn soft active" data-cat="leadership" onclick="window.selectCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--soft)">Soft Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--soft)"></div>Leadership category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+25 Race Points — highest reward</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--chrome)"></div>Best for big responsibilities</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Soft</span><span class="tgb-cat">Leadership</span></div>
               <div class="tgb-rp">25 RP</div>
             </button>
             <button class="tyre-grid-btn medium" data-cat="school" onclick="window.selectCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--medium)">Medium Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--medium)"></div>School category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+20 Race Points — high reward</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--chrome)"></div>Homework, study, revision</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Medium</span><span class="tgb-cat">School</span></div>
               <div class="tgb-rp">20 RP</div>
             </button>
             <button class="tyre-grid-btn hard" data-cat="sport" onclick="window.selectCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--hard)">Hard Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--hard)"></div>Sport category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+15 Race Points — good reward</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--chrome)"></div>Practice, training, games</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Hard</span><span class="tgb-cat">Sport</span></div>
               <div class="tgb-rp">15 RP</div>
             </button>
             <button class="tyre-grid-btn inter" data-cat="personal" onclick="window.selectCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--inter)">Inter Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--inter)"></div>Personal category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+10 Race Points — daily tasks</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--chrome)"></div>Chores, hobbies, reading</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Inter</span><span class="tgb-cat">Personal</span></div>
               <div class="tgb-rp">10 RP</div>
@@ -999,21 +1059,41 @@ body::after {
           <label class="form-label">Compound (Category)</label>
                     <div class="tyre-grid" id="tyre-grid-multi">
             <button class="tyre-grid-btn soft active" data-cat="leadership" onclick="window.selectMultiCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--soft)">Soft Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--soft)"></div>Leadership category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+25 Race Points — highest reward</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Soft</span><span class="tgb-cat">Leadership</span></div>
               <div class="tgb-rp">25 RP</div>
             </button>
             <button class="tyre-grid-btn medium" data-cat="school" onclick="window.selectMultiCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--medium)">Medium Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--medium)"></div>School category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+20 Race Points — high reward</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Medium</span><span class="tgb-cat">School</span></div>
               <div class="tgb-rp">20 RP</div>
             </button>
             <button class="tyre-grid-btn hard" data-cat="sport" onclick="window.selectMultiCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--hard)">Hard Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--hard)"></div>Sport category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+15 Race Points — good reward</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Hard</span><span class="tgb-cat">Sport</span></div>
               <div class="tgb-rp">15 RP</div>
             </button>
             <button class="tyre-grid-btn inter" data-cat="personal" onclick="window.selectMultiCat(this)">
+              <div class="tyre-tooltip">
+                <span class="tt-title" style="color:var(--inter)">Inter Compound</span>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--inter)"></div>Personal category</div>
+                <div class="tt-row"><div class="tt-dot" style="background:var(--gold-hi)"></div>+10 Race Points — daily tasks</div>
+              </div>
               <div class="tgb-ring"></div>
               <div class="tgb-info"><span class="tgb-name">Inter</span><span class="tgb-cat">Personal</span></div>
               <div class="tgb-rp">10 RP</div>
